@@ -7,10 +7,7 @@
 	<meta name="country" content="Ha Noi">
 	<meta name="viewpoint" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="design.css">
-	<script>
-		var greeting = "Welcome to my world";
-		alert(greeting);
-	</script>
+	<script src="javascript/index.js"></script>
 	<title>My Resume</title>
 </head>
 <body>
@@ -19,15 +16,15 @@
 		<a href="#contact" class="menu_left">Contact</a>
 		<a href="#education" class="menu_left">Education</a>
 		<a href="#score" class="menu_left">Score</a>
-		<a href="#social" class="menu_right">Social</a>
 		<a href="#purchased" class="menu_right">Purchased</a>
+		<a href="#social" class="menu_right">Social</a>
 	</nav>
 	<div id="flex-container">
 		<div id="left_side">
 			<img src="photo/photo.jpg" alt="My photo">
 
 			<h2 id="contact">Contact information</h2>
-			<p><em>I am working in the information technology field.</em></p>
+			<p><em>I am working in the information technolody field.</em></p>
 			<ul>
 				<li><strong>Full name</strong>: Tran Trung Hieu</li>
 				<li><strong>Country</strong>: Vietnam</li>
@@ -130,6 +127,16 @@
 				</div>
 				<div class="course-item"></div>
 			</div>
+			<div id="my-project">
+				<h2>My Project</h2>
+				<div id="myproject">
+					<h1>Money converter</h1>
+					<button type="button" id="btn1">Enter USD</button>
+					<button type="button" id="btn2">Enter VND</button>
+					<p id="message1">USD to VND</p> 
+					<p id="message2">VND to USD</p>
+				</div>
+			</div>
 		</div>
 	</div>
 	<footer>
@@ -137,11 +144,4 @@
 	</footer>
 
 </body>
-
 </html>
-
-
-
-
-
-
