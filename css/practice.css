@@ -142,4 +142,7 @@ table th {
 	#flex_container {
 		flex-wrap: wrap;
 	}
+	.course_item {
+		width: 50%;
+	}
 }
