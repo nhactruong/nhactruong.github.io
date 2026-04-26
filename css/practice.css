@@ -130,7 +130,7 @@ table th {
 	}
 }
 
-@media(max-width: 300px) {
+@media(max-width: 500px) {
 	#left_side {
 		flex: 100%;
 	}
