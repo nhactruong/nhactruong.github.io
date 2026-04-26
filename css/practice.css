@@ -112,7 +112,7 @@ table th {
 	padding: 0px 10px 20px 10px;
 }
 
-@media(max-width: 800px) {
+@media(max-width: 600px) {
 	#left_side {
 		flex: 100%;
 	}
@@ -130,7 +130,7 @@ table th {
 	}
 }
 
-@media(max-width: 500px) {
+@media(max-width: 300px) {
 	#left_side {
 		flex: 100%;
 	}
