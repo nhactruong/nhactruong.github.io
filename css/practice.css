@@ -94,7 +94,6 @@ table th {
 
 .course_item {
 	width: 25%;
-	float: left;
 	text-align: center;
 }
 
@@ -114,11 +113,11 @@ table th {
 
 @media(max-width: 800px) {
 	#left_side {
-		flex: 40%;
+		flex: 100%;
 	}
 
 	#right_side {
-		flex: 60%;
+		flex: 100%;
 	}
 
 	#flex_container {
@@ -132,11 +131,11 @@ table th {
 
 @media(max-width: 480px) {
 	#left_side {
-		flex: 40%;
+		flex: 100%;
 	}
 
 	#right_side {
-		flex: 60%;
+		flex: 100%;
 	}
 
 	#flex_container {
