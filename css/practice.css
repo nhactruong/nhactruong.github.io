@@ -37,7 +37,7 @@ nav a:hover {
 
 #flex_container {
 	display: flex;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 }
 
 #left_side {
@@ -114,13 +114,11 @@ table th {
 
 @media(max-width: 800px) {
 	#left_side {
-		flex: 100%;
-		width: 100%;
+		flex: 40%;
 	}
 
 	#right_side {
-		flex: 100%;
-		width: 100%;
+		flex: 60%;
 	}
 
 	#flex_container {
@@ -134,13 +132,11 @@ table th {
 
 @media(max-width: 480px) {
 	#left_side {
-		flex: 100%;
-		width: 100%;
+		flex: 40%;
 	}
 
 	#right_side {
-		flex: 100%;
-		width: 100%;
+		flex: 60%;
 	}
 
 	#flex_container {
