@@ -37,7 +37,7 @@ nav a:hover {
 
 #flex_container {
 	display: flex;
-	flex-wrap: nowrap;
+	flex-wrap: wrap;
 }
 
 #left_side {
@@ -115,10 +115,12 @@ table th {
 @media(max-width: 800px) {
 	#left_side {
 		flex: 100%;
+		width: 100%;
 	}
 
 	#right_side {
 		flex: 100%;
+		width: 100%;
 	}
 
 	#flex_container {
