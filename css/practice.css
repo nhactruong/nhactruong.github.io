@@ -130,13 +130,15 @@ table th {
 	}
 }
 
-@media(max-width: 480px) {
+@media(max-width: 414px) {
 	#left_side {
 		flex: 100%;
+		width: 100%;
 	}
 
 	#right_side {
 		flex: 100%;
+		width: 100%;
 	}
 
 	#flex_container {
