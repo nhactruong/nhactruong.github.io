@@ -6,7 +6,7 @@
 }
 
 #ava {
-	width: 30%;
+	width: 50%;
 }
 
 nav {
@@ -108,6 +108,10 @@ table th {
 	padding: 5px 20px;
 }
 
+.course_description {
+	padding: 0px 10px 20px 10px;
+}
+
 @media(max-width: 800px) {
 	#left_side {
 		flex: 100%;
@@ -138,7 +142,9 @@ table th {
 	#flex_container {
 		flex-wrap: wrap;
 	}
+
 	.course_item {
-		width: 50%;
+		width: 100%;
 	}
+
 }
