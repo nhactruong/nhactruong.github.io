@@ -1,35 +1,584 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<meta name="description" content="My Resume Website"/>
 	<meta name="author" content="Billy Jacob"/>
-	<meta name="country" content="Vietnam"/>
-	<link rel="stylesheet" type="text/css" href="index.css">
 	<title>Billy Website</title>
+	
+	<style>
+		/* =========================================================
+		   1. CẤU HÌNH BIẾN MÀU SẮC (VARIABLES)
+		========================================================= */
+		:root {
+			--green: #a1eb86;
+			--dark-green: #5cbf3a;
+			--nav-bg: #1a1a2e;
+			--nav-accent: #16213e;
+			--card-bg: #fff;
+			--left-bg: #f0f7ed;
+			--footer-bg: #1a1a2e;
+			--text: #181818;
+			--muted: #666;
+			--accent: #04AA6D;
+			--accent2: #a1eb86;
+			--shadow: 0 8px 32px rgba(4,170,109,0.10);
+		}
+
+		/* =========================================================
+		   2. CÀI ĐẶT CHUNG (BASE)
+		========================================================= */
+		*, *::before, *::after { 
+			box-sizing: border-box; 
+			margin: 0; 
+			padding: 0; 
+		}
+
+		html { 
+			scroll-behavior: smooth; /* Cuộn trang mượt mà */
+		}
+
+		body {
+			font-family: 'DM Sans', sans-serif;
+			background: #f5f9f3;
+			color: var(--text);
+			overflow-x: hidden; /* Ẩn thanh cuộn ngang */
+		}
+
+		/* =========================================================
+		   3. HIỆU ỨNG TẢI TRANG (PAGE LOADER)
+		========================================================= */
+		#page-loader {
+			position: fixed;
+			inset: 0; /* Bao phủ toàn màn hình */
+			background: #1a1a2e;
+			z-index: 99999;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			gap: 18px;
+			transition: opacity 0.6s ease, visibility 0.6s;
+		}
+
+		/* Class này được JS thêm vào để ẩn loader */
+		#page-loader.gone { 
+			opacity: 0; 
+			visibility: hidden; 
+		}
+
+		.loader-ring {
+			width: 56px; height: 56px;
+			border: 4px solid rgba(161,235,134,0.2);
+			border-top-color: var(--green);
+			border-radius: 50%;
+			animation: spin 0.8s linear infinite;
+		}
+
+		.loader-text {
+			color: rgba(255,255,255,0.6);
+			font-family: 'Syne', sans-serif;
+			font-size: 1rem;
+			letter-spacing: 2px;
+		}
+
+		@keyframes spin { 
+			to { transform: rotate(360deg); } 
+		}
+
+		/* =========================================================
+		   4. PHẦN ĐẦU TRANG (HERO HEADER)
+		========================================================= */
+		#menu_text {
+			background: linear-gradient(135deg, #a1eb86 0%, #5cbf3a 40%, #1a7a4a 100%);
+			text-align: center;
+			padding: 90px 20px 70px;
+			position: relative;
+			overflow: hidden;
+		}
+
+		/* Lớp phủ sáng mờ ở trên gradient */
+		#menu_text::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: radial-gradient(ellipse 60% 80% at 70% 30%, rgba(255,255,255,0.25) 0%, transparent 70%);
+			pointer-events: none;
+		}
+
+		.hero-title {
+			font-family: 'Syne', sans-serif;
+			font-size: clamp(2.5rem, 6vw, 5rem);
+			font-weight: 800;
+			color: #fff;
+			text-shadow: 0 4px 24px rgba(0,0,0,0.18);
+			letter-spacing: -1px;
+			opacity: 0;
+			transform: translateY(40px) scale(0.96);
+			animation: heroIn 0.9s cubic-bezier(.22,1,.36,1) 0.2s forwards;
+		}
+
+		.hero-sub {
+			margin-top: 10px;
+			font-size: 1.1rem;
+			color: rgba(255,255,255,0.82);
+			font-weight: 300;
+			letter-spacing: 2px;
+			opacity: 0;
+			animation: heroIn 0.9s cubic-bezier(.22,1,.36,1) 0.5s forwards;
+		}
+
+		@keyframes heroIn {
+			to { opacity: 1; transform: translateY(0) scale(1); }
+		}
+
+		/* Các đốm sáng trôi nổi (Blobs) */
+		.blob {
+			position: absolute;
+			border-radius: 50%;
+			filter: blur(40px);
+			opacity: 0.35;
+			animation: blobFloat 7s ease-in-out infinite alternate;
+		}
+		.blob1 { width: 220px; height: 220px; background: #fff; top: -60px; left: -60px; animation-delay: 0s; }
+		.blob2 { width: 160px; height: 160px; background: #04AA6D; top: 20px; right: 10%; animation-delay: 2s; }
+		.blob3 { width: 100px; height: 100px; background: #ffdd57; bottom: -30px; left: 30%; animation-delay: 4s; }
+
+		@keyframes blobFloat {
+			from { transform: translate(0,0) scale(1); }
+			to { transform: translate(30px, 20px) scale(1.12); }
+		}
+
+		/* =========================================================
+		   5. THANH ĐIỀU HƯỚNG (NAVIGATION)
+		========================================================= */
+		nav {
+			background: var(--nav-bg);
+			position: sticky;
+			top: 0;
+			z-index: 100;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 0 10px;
+			box-shadow: 0 2px 24px rgba(0,0,0,0.18);
+		}
+
+		nav .nav-left, nav .nav-right {
+			display: flex;
+		}
+
+		nav a {
+			color: rgba(255,255,255,0.78);
+			padding: 16px 22px;
+			display: block;
+			text-decoration: none;
+			font-family: 'Syne', sans-serif;
+			font-weight: 700;
+			font-size: 0.88rem;
+			letter-spacing: 1.5px;
+			text-transform: uppercase;
+			position: relative;
+			transition: color 0.3s;
+		}
+
+		/* Đường gạch chân chạy ra khi Hover */
+		nav a::after {
+			content: '';
+			position: absolute;
+			left: 50%; bottom: 10px;
+			width: 0; height: 2px;
+			background: var(--green);
+			border-radius: 2px;
+			transition: all 0.35s cubic-bezier(.22,1,.36,1);
+			transform: translateX(-50%);
+		}
+
+		nav a:hover { color: #fff; }
+		nav a:hover::after { width: 60%; }
+
+		/* =========================================================
+		   6. BỐ CỤC CHÍNH (LAYOUT CỘT TRÁI - PHẢI)
+		========================================================= */
+		#flex_container {
+			display: flex;
+			flex-wrap: nowrap;
+			min-height: 80vh;
+		}
+
+		#left_side {
+			flex: 0 0 32%;
+			background: var(--left-bg);
+			padding: 36px 28px;
+			border-right: 1px solid rgba(4,170,109,0.12);
+		}
+
+		#right_side {
+			flex: 1;
+			padding: 36px 28px;
+			background: #f7faf5;
+		}
+
+		/* Tiêu đề từng mục (H2) */
+		h2 {
+			font-family: 'Syne', sans-serif;
+			font-size: 1.4rem;
+			font-weight: 800;
+			margin: 28px 0 14px;
+			color: #1a1a2e;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		h2::before {
+			content: '';
+			display: inline-block;
+			width: 4px;
+			height: 1.3em;
+			background: linear-gradient(to bottom, var(--green), var(--accent));
+			border-radius: 2px;
+		}
+
+		/* =========================================================
+		   7. CỘT TRÁI: THÔNG TIN & ĐIỂM SỐ
+		========================================================= */
+		#ava {
+			width: 70%;
+			border-radius: 50%;
+			display: block;
+			margin: 8px auto 14px;
+			border: 4px solid var(--green);
+			box-shadow: 0 0 0 8px rgba(161,235,134,0.18), var(--shadow);
+			transition: transform 0.5s cubic-bezier(.22,1,.36,1), box-shadow 0.5s;
+		}
+
+		#ava:hover {
+			transform: scale(1.06) rotate(-2deg);
+			box-shadow: 0 0 0 14px rgba(161,235,134,0.22), 0 16px 40px rgba(4,170,109,0.2);
+		}
+
+		#left_side em {
+			display: block;
+			text-align: center;
+			color: var(--muted);
+			font-style: italic;
+			margin-bottom: 12px;
+			font-size: 0.97rem;
+		}
+
+		#left_side ul {
+			list-style: none;
+		}
+
+		#left_side ul li {
+			padding: 7px 0;
+			border-bottom: 1px solid rgba(4,170,109,0.09);
+			font-size: 0.95rem;
+		}
+
+		#left_side ul li strong {
+			color: var(--accent);
+		}
+
+		#left_side p a {
+			color: var(--accent);
+			font-weight: 600;
+			text-decoration: none;
+			border-bottom: 1.5px solid transparent;
+			transition: border-color 0.25s;
+		}
+
+		#left_side p a:hover { 
+			border-color: var(--accent); 
+		}
+
+		/* Danh sách học vấn (ol) */
+		ol {
+			padding-left: 0;
+			list-style: none;
+			counter-reset: edu;
+		}
+
+		ol li {
+			counter-increment: edu;
+			display: flex;
+			align-items: flex-start;
+			gap: 12px;
+			padding: 8px 0;
+			font-size: 0.95rem;
+			border-bottom: 1px solid rgba(4,170,109,0.07);
+			
+			/* Trạng thái ban đầu: mờ và trượt sang trái */
+			opacity: 0;
+			transform: translateX(-24px);
+			transition: opacity 0.5s, transform 0.5s cubic-bezier(.22,1,.36,1);
+		}
+
+		/* JS sẽ thêm class .visible vào để hiện lên */
+		ol li.visible { 
+			opacity: 1; 
+			transform: translateX(0); 
+		}
+
+		/* Tạo số thứ tự bằng CSS */
+		ol li::before {
+			content: counter(edu);
+			min-width: 28px;
+			height: 28px;
+			background: linear-gradient(135deg, var(--green), var(--accent));
+			color: #fff;
+			border-radius: 50%;
+			display: grid;
+			place-items: center;
+			font-family: 'Syne', sans-serif;
+			font-weight: 700;
+			font-size: 0.78rem;
+			flex-shrink: 0;
+		}
+
+		/* Bảng điểm */
+		table {
+			font-family: 'DM Sans', sans-serif;
+			border-collapse: collapse;
+			width: 100%;
+			border-radius: 10px;
+			overflow: hidden;
+			box-shadow: var(--shadow);
+		}
+
+		table td, table th {
+			border: 1px solid rgba(4,170,109,0.12);
+			padding: 10px 12px;
+			text-align: center;
+		}
+
+		table tr:nth-child(even) { background: rgba(161,235,134,0.08); }
+		table tr { transition: background 0.25s; }
+		table tr:hover { background: rgba(4,170,109,0.12); }
+
+		table th {
+			background: var(--accent);
+			color: #fff;
+			font-family: 'Syne', sans-serif;
+			font-size: 0.88rem;
+		}
+
+		/* Hiệu ứng thanh chạy ở dưới điểm số */
+		table td.score-cell {
+			position: relative;
+			overflow: hidden;
+		}
+
+		table td.score-cell::after {
+			content: '';
+			position: absolute;
+			left: 0; bottom: 0;
+			height: 3px;
+			width: 0;
+			background: var(--green);
+			transition: width 0.8s cubic-bezier(.22,1,.36,1);
+		}
+
+		table tr.visible td.score-cell::after { 
+			width: 100%; 
+		}
+
+		/* =========================================================
+		   8. CỘT PHẢI: LƯỚI KHÓA HỌC (GRID)
+		========================================================= */
+		#course_container {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+			gap: 22px;
+		}
+
+		.course_item {
+			background: #fff;
+			border-radius: 16px;
+			overflow: hidden;
+			box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+			cursor: pointer;
+			position: relative;
+			
+			/* Trạng thái ban đầu để lát JS làm hiệu ứng hiện lên */
+			opacity: 0;
+			transform: translateY(40px) scale(0.95);
+			transition: transform 0.45s cubic-bezier(.22,1,.36,1), box-shadow 0.45s, opacity 0.65s;
+		}
+
+		/* JS sẽ thêm class này khi cuộn chuột tới nơi */
+		.course_item.visible {
+			opacity: 1;
+			transform: translateY(0) scale(1);
+		}
+
+		/* Lớp phủ mờ màu xanh khi Hover */
+		.course_item::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(135deg, rgba(161,235,134,0.18), rgba(4,170,109,0.08));
+			opacity: 0;
+			transition: opacity 0.4s;
+			z-index: 1;
+			border-radius: 16px;
+			pointer-events: none; /* Để không chặn sự kiện click chuột */
+		}
+
+		.course_item a::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			z-index: 2;
+		}
+
+		.course_item:hover {
+			box-shadow: 0 16px 40px rgba(4,170,109,0.18);
+		}
+
+		.course_item:hover::before { 
+			opacity: 1; 
+		}
+
+		.course_item a {
+			display: block;
+			text-decoration: none;
+		}
+
+		.course_img {
+			width: 100%;
+			height: 130px;
+			object-fit: cover;
+			display: block;
+			transition: transform 0.5s cubic-bezier(.22,1,.36,1);
+		}
+
+		.course_item:hover .course_img { 
+			transform: scale(1.07); 
+		}
+
+		.course_title {
+			font-family: 'Syne', sans-serif;
+			font-size: 1rem;
+			font-weight: 700;
+			padding: 10px 12px 4px;
+			color: #1a1a2e;
+		}
+
+		.course_description {
+			padding: 0 12px 14px;
+			font-size: 0.82rem;
+			color: var(--muted);
+			line-height: 1.5;
+		}
+
+		/* =========================================================
+		   9. CHÂN TRANG (FOOTER)
+		========================================================= */
+		footer {
+			text-align: center;
+			background: var(--footer-bg);
+			padding: 34px 40px;
+			color: rgba(255,255,255,0.7);
+			font-size: 0.95rem;
+			letter-spacing: 0.5px;
+			position: relative;
+			overflow: hidden;
+		}
+
+		/* Đường viền gradient ở trên cùng của footer */
+		footer::before {
+			content: '';
+			position: absolute;
+			top: 0; left: 0; right: 0;
+			height: 3px;
+			background: linear-gradient(90deg, var(--green), var(--accent), #57f)
+		}
+
+		footer a {
+			color: var(--green);
+			text-decoration: none;
+			font-weight: 600;
+			transition: color 0.25s;
+		}
+		
+		footer a:hover { 
+			color: #fff; 
+		}
+
+		/* =========================================================
+		   10. HIỆU ỨNG ÁNH SÁNG THEO CHUỘT
+		========================================================= */
+		.cursor-glow {
+			pointer-events: none;
+			position: fixed;
+			width: 320px; height: 320px;
+			background: radial-gradient(circle, rgba(161,235,134,0.13) 0%, transparent 70%);
+			border-radius: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 9999;
+			transition: transform 0.08s linear;
+			will-change: transform;
+		}
+
+		/* =========================================================
+		   11. STAGGER ANIMATIONS (Hiện từ từ từng phần tử)
+		========================================================= */
+		/* Delay thời gian hiện để tạo cảm giác lướt sóng */
+		.course_item:nth-child(1) { transition-delay: 0.05s; }
+		.course_item:nth-child(2) { transition-delay: 0.10s; }
+		.course_item:nth-child(3) { transition-delay: 0.15s; }
+		.course_item:nth-child(4) { transition-delay: 0.20s; }
+		.course_item:nth-child(5) { transition-delay: 0.25s; }
+		.course_item:nth-child(6) { transition-delay: 0.30s; }
+		.course_item:nth-child(7) { transition-delay: 0.35s; }
+		.course_item:nth-child(8) { transition-delay: 0.40s; }
+
+		ol li:nth-child(1) { transition-delay: 0.05s; }
+		ol li:nth-child(2) { transition-delay: 0.12s; }
+		ol li:nth-child(3) { transition-delay: 0.19s; }
+		ol li:nth-child(4) { transition-delay: 0.26s; }
+
+		/* =========================================================
+		   12. ĐÁP ỨNG THIẾT BỊ DI ĐỘNG (RESPONSIVE)
+		========================================================= */
+		@media(max-width: 860px) {
+			#flex_container { flex-wrap: wrap; }
+			#left_side { flex: 100%; border-right: none; border-bottom: 1px solid rgba(4,170,109,0.12); }
+			#right_side { flex: 100%; }
+			#course_container { grid-template-columns: repeat(2, 1fr); }
+			nav { flex-wrap: wrap; }
+		}
+
+		@media(max-width: 480px) {
+			#course_container { grid-template-columns: 1fr; }
+			nav a { padding: 12px 10px; font-size: 0.78rem; }
+		}
+	</style>
 </head>
 <body>
 
-<!-- Page loader -->
+<!-- Màn hình tải trang -->
 <div id="page-loader">
 	<div class="loader-ring"></div>
 	<div class="loader-text">LOADING...</div>
 </div>
 
-<!-- Cursor glow -->
+<!-- Đốm sáng đi theo chuột -->
 <div class="cursor-glow" id="cursorGlow"></div>
 
-<!-- HERO -->
-<div id="menu_text">
+<!-- PHẦN ĐẦU TRANG -->
+<header id="menu_text">
 	<div class="blob blob1"></div>
 	<div class="blob blob2"></div>
 	<div class="blob blob3"></div>
 	<div class="hero-title">My Resume</div>
 	<div class="hero-sub">Tran Trung Hieu · Billy Jacob · Vietnam</div>
-</div>
+</header>
 
-<!-- NAV -->
+<!-- THANH ĐIỀU HƯỚNG -->
 <nav>
 	<div class="nav-left">
 		<a href="#contact" class="menu_left">About</a>
@@ -42,12 +591,13 @@
 	</div>
 </nav>
 
-<!-- MAIN -->
-<div id="flex_container">
-	<!-- LEFT -->
-	<div id="left_side">
+<!-- NỘI DUNG CHÍNH -->
+<main id="flex_container">
+	
+	<!-- CỘT TRÁI -->
+	<aside id="left_side">
 		<h2 id="contact">About me</h2>
-		<img src="photo/anh.jpg" id="ava" alt="Billy Jacob"/>
+		<img src="photo/anh.jpg" id="ava" alt="Billy Jacob" onerror="this.src='https://via.placeholder.com/200'"/>
 		<p><em>I am working in the information technology field</em></p>
 		<ul>
 			<li><strong>Fullname:</strong> Tran Trung Hieu</li>
@@ -101,70 +651,212 @@
 		<h2 id="social">Social Media</h2>
 		<p>Facebook: <a href="https://www.facebook.com/tran.hieu.489500/" target="_blank">Trần Hiếu</a></p>
 		<p>Instagram: <a href="https://www.instagram.com/hieu_trannt/" target="_blank">INTJ</a></p>
-	</div>
+	</aside>
 
-	<!-- RIGHT -->
-	<div id="right_side">
+	<!-- CỘT PHẢI -->
+	<section id="right_side">
 		<h2 id="courses">Purchased Courses</h2>
 		<div id="course_container">
 
 			<div class="course_item">
-				<a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=198018da4bb74ce0af571474fb27b075&pm=c" target="_blank"><img class="course_img" src="photo/logicmath.jpg" alt="Logic Math"/>
-				<div class="course_title">Logic Math</div>
-				<div class="course_description">Toán tư duy cơ bản, xây dựng nền tảng cho việc học kĩ thuật và lập trình bậc đại học</div></a>
+				<a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=198018da4bb74ce0af571474fb27b075&pm=c" target="_blank">
+					<img class="course_img" src="photo/logicmath.jpg" alt="Logic Math" onerror="this.src='https://via.placeholder.com/300x150?text=Logic+Math'"/>
+					<div class="course_title">Logic Math</div>
+					<div class="course_description">Toán tư duy cơ bản, xây dựng nền tảng cho việc học kĩ thuật và lập trình bậc đại học</div>
+				</a>
 			</div>
 
 			<div class="course_item">
-				<a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=4175f99f52444f85ad0ba0b279049cb8&pm=c" target="_blank"><img class="course_img" src="photo/python.jpg" alt="Python Basic"/>
-				<div class="course_title">Python Basic</div>
-				<div class="course_description">Lập trình python cơ bản đến nâng cao cho người mới, nắm vững kĩ thuật lập trình cơ bản</div></a>
+				<a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=4175f99f52444f85ad0ba0b279049cb8&pm=c" target="_blank">
+					<img class="course_img" src="photo/python.jpg" alt="Python Basic" onerror="this.src='https://via.placeholder.com/300x150?text=Python'"/>
+					<div class="course_title">Python Basic</div>
+					<div class="course_description">Lập trình python cơ bản đến nâng cao cho người mới, nắm vững kĩ thuật lập trình cơ bản</div>
+				</a>
 			</div>
 
 			<div class="course_item">
-				<a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=5cf295700aef400eb870b9234594d144&pm=c" target="_blank"><img class="course_img" src="photo/web.jpg" alt="Web Basic"/>
-				<div class="course_title">Web Basic</div>
-				<div class="course_description">Lập trình website cho người mới bắt đầu, xây dựng website cá nhân và hệ thống backend theo ý muốn</div></a>
+				<a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=5cf295700aef400eb870b9234594d144&pm=c" target="_blank">
+					<img class="course_img" src="photo/web.jpg" alt="Web Basic" onerror="this.src='https://via.placeholder.com/300x150?text=Web'"/>
+					<div class="course_title">Web Basic</div>
+					<div class="course_description">Lập trình website cho người mới bắt đầu, xây dựng website cá nhân và hệ thống backend theo ý muốn</div>
+				</a>
 			</div>
 
 			<div class="course_item">
-				<a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=2a7e11464d29432e9018ab72167d4fab&pm=c" target="_blank"><img class="course_img" src="photo/game.jpg" alt="Game Python"/>
-				<div class="course_title">Game Python</div>
-				<div class="course_description">Lập trình game rắn săn mồi, đồng hồ đếm ngược, flappy bird bằng thư viện đồ hoạ pygame</div></a>
+				<a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=2a7e11464d29432e9018ab72167d4fab&pm=c" target="_blank">
+					<img class="course_img" src="photo/game.jpg" alt="Game Python" onerror="this.src='https://via.placeholder.com/300x150?text=Game'"/>
+					<div class="course_title">Game Python</div>
+					<div class="course_description">Lập trình game rắn săn mồi, đồng hồ đếm ngược, flappy bird bằng thư viện đồ hoạ pygame</div>
+				</a>
 			</div>
 
 			<div class="course_item">
-				<a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=660c7e75034f44a7a3dd27b2be4f023e&pm=c" target="_blank"><img class="course_img" src="photo/pythonexcel.jpg" alt="Python Excel"/>
-				<div class="course_title">Python Excel</div>
-				<div class="course_description">Làm việc với file csv, tự động tạo thư mục và file, ảnh, file word theo yêu cầu của file excel</div></a>
+				<a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=660c7e75034f44a7a3dd27b2be4f023e&pm=c" target="_blank">
+					<img class="course_img" src="photo/pythonexcel.jpg" alt="Python Excel" onerror="this.src='https://via.placeholder.com/300x150?text=Excel'"/>
+					<div class="course_title">Python Excel</div>
+					<div class="course_description">Làm việc với file csv, tự động tạo thư mục và file, ảnh, file word theo yêu cầu của file excel</div>
+				</a>
 			</div>
 
 			<div class="course_item">
-				<a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=c735d90b891a4351b658fff8d8cab589&pm=c" target="_blank"><img class="course_img" src="photo/data.jpg" alt="Data Science Basic"/>
-				<div class="course_title">Data Science</div>
-				<div class="course_description">Sử dụng kĩ thuật làm sạch dữ liệu và vẽ biểu đồ bằng thư viện matplotlib để phân tích dữ liệu</div></a>
+				<a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=c735d90b891a4351b658fff8d8cab589&pm=c" target="_blank">
+					<img class="course_img" src="photo/data.jpg" alt="Data Science Basic" onerror="this.src='https://via.placeholder.com/300x150?text=Data'"/>
+					<div class="course_title">Data Science</div>
+					<div class="course_description">Sử dụng kĩ thuật làm sạch dữ liệu và vẽ biểu đồ bằng thư viện matplotlib để phân tích dữ liệu</div>
+				</a>
 			</div>
 
 			<div class="course_item">
-				<a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=49629f65a8424683993db3e15ad4e71f&pm=c" target="_blank"><img class="course_img" src="photo/ai.jpg" alt="AI Basic"/>
-				<div class="course_title">AI Basic</div>
-				<div class="course_description">Lập trình trí tuệ nhân tạo, thuật toán KNN, K-means, Regression và Gradient Descent</div></a>
+				<a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=49629f65a8424683993db3e15ad4e71f&pm=c" target="_blank">
+					<img class="course_img" src="photo/ai.jpg" alt="AI Basic" onerror="this.src='https://via.placeholder.com/300x150?text=AI'"/>
+					<div class="course_title">AI Basic</div>
+					<div class="course_description">Lập trình trí tuệ nhân tạo, thuật toán KNN, K-means, Regression và Gradient Descent</div>
+				</a>
 			</div>
 
 			<div class="course_item">
-				<a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=9f4ae68d413f4746b2646bcd751104e9&pm=c" target="_blank"><img class="course_img" src="photo/pythonchatgpt.png" alt="Python ChatGPT"/>
-				<div class="course_title">Python ChatGPT</div>
-				<div class="course_description">Xử lý file JSON, tạo chương trình quản lý học sinh và phân tích dữ liệu Facebook với ChatGPT</div></a>
+				<a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=9f4ae68d413f4746b2646bcd751104e9&pm=c" target="_blank">
+					<img class="course_img" src="photo/pythonchatgpt.png" alt="Python ChatGPT" onerror="this.src='https://via.placeholder.com/300x150?text=ChatGPT'"/>
+					<div class="course_title">Python ChatGPT</div>
+					<div class="course_description">Xử lý file JSON, tạo chương trình quản lý học sinh và phân tích dữ liệu Facebook với ChatGPT</div>
+				</a>
 			</div>
 
 		</div>
-	</div>
-</div>
+	</section>
+</main>
 
 <footer>
 	Created by Billy Jacob · <a href="mailto:trunghieutran822007@gmail.com">Email me</a>
 </footer>
 
-<script src="index.js"></script>
+<!-- KỊCH BẢN JAVASCRIPT (Đã được viết lại minh bạch) -->
+<script>
+	// =========================================================
+	// 1. TẮT MÀN HÌNH CHỜ SAU KHI TẢI TRANG
+	// =========================================================
+	window.addEventListener('load', function() {
+		// Chờ thêm 0.6 giây để tạo cảm giác mượt mà trước khi ẩn
+		setTimeout(function() {
+			document.getElementById('page-loader').classList.add('gone');
+		}, 600);
+	});
+
+	// =========================================================
+	// 2. HIỆU ỨNG ÁNH SÁNG ĐI THEO CHUỘT
+	// (Đã viết lại bằng logic cơ bản, bỏ hàm ẩn danh IIFE gây khó hiểu)
+	// =========================================================
+	const glowEffect = document.getElementById('cursorGlow');
+	
+	// Tọa độ thực tế của con trỏ chuột
+	let viTriChuotX = 0; 
+	let viTriChuotY = 0; 
+	
+	// Tọa độ của đốm sáng (sẽ chạy theo chuột với tốc độ trễ)
+	let viTriDomSangX = 0; 
+	let viTriDomSangY = 0;
+
+	// Bắt sự kiện khi chuột di chuyển
+	document.addEventListener('mousemove', function(event) { 
+		viTriChuotX = event.clientX; 
+		viTriChuotY = event.clientY; 
+	});
+
+	// Hàm lặp liên tục để tạo chuyển động trượt mượt mà (Linear Interpolation)
+	function chayHieuUngAnhSang() {
+		// Tính toán khoảng cách chênh lệch và di chuyển đốm sáng đi thêm 10% (0.1) khoảng cách đó
+		viTriDomSangX = viTriDomSangX + (viTriChuotX - viTriDomSangX) * 0.1;
+		viTriDomSangY = viTriDomSangY + (viTriChuotY - viTriDomSangY) * 0.1;
+		
+		// Cập nhật vị trí lên màn hình
+		glowEffect.style.left = viTriDomSangX + 'px';
+		glowEffect.style.top = viTriDomSangY + 'px';
+		
+		// Gọi lại chính nó ở khung hình tiếp theo
+		requestAnimationFrame(chayHieuUngAnhSang);
+	}
+	// Bắt đầu vòng lặp
+	chayHieuUngAnhSang();
+
+	// =========================================================
+	// 3. HIỆU ỨNG HIỆN RA KHI CUỘN TRANG (INTERSECTION OBSERVER)
+	// =========================================================
+	// Tạo một "người quan sát" để kiểm tra xem phần tử đã lọt vào màn hình chưa
+	const theoDoiCuonTrang = new IntersectionObserver(function(cacPhanTu) {
+		cacPhanTu.forEach(function(phanTu) {
+			// Nếu phần tử đang nằm trong vùng nhìn thấy của màn hình
+			if (phanTu.isIntersecting) {
+				// Thêm class 'visible' để kích hoạt CSS hiện ra
+				phanTu.target.classList.add('visible');
+			}
+		});
+	}, { threshold: 0.12 }); // threshold 0.12: Chỉ kích hoạt khi phần tử hiện ra được 12%
+
+	// Yêu cầu "người quan sát" theo dõi các thẻ khóa học, mục học vấn và bảng điểm
+	document.querySelectorAll('.course_item').forEach(el => theoDoiCuonTrang.observe(el));
+	document.querySelectorAll('ol li').forEach(el => theoDoiCuonTrang.observe(el));
+	document.querySelectorAll('.data-row').forEach(el => theoDoiCuonTrang.observe(el));
+
+	// =========================================================
+	// 4. ĐỔI MÀU MENU KHI ĐANG XEM TỚI MỤC TƯƠNG ỨNG
+	// =========================================================
+	const danhSachID = ['contact', 'edu', 'scores', 'social', 'courses'];
+	const cacTheLink = document.querySelectorAll('nav a');
+
+	window.addEventListener('scroll', function() {
+		let mucDangXem = '';
+		
+		// Kiểm tra từng mục xem vị trí cuộn hiện tại đã vượt qua mục đó chưa
+		danhSachID.forEach(function(id) {
+			const phanTu = document.getElementById(id);
+			// Trừ đi 120px bù cho chiều cao của thanh menu
+			if (phanTu && window.scrollY >= phanTu.offsetTop - 120) {
+				mucDangXem = id;
+			}
+		});
+
+		// Cập nhật màu xanh cho thẻ link tương ứng trên thanh menu
+		cacTheLink.forEach(function(link) {
+			const dichDen = link.getAttribute('href'); // VD: "#edu"
+			if (dichDen === '#' + mucDangXem) {
+				link.style.color = '#a1eb86'; // Đổi màu xanh
+			} else {
+				link.style.color = ''; // Xóa màu
+			}
+		});
+	}, { passive: true }); // Tối ưu hiệu năng cuộn chuột
+
+	// =========================================================
+	// 5. HIỆU ỨNG NGHIÊNG 3D CHO THẺ KHÓA HỌC (TILT EFFECT)
+	// (Đã viết lại toán học bằng biến số cụ thể để dễ hiểu)
+	// =========================================================
+	const cacTheKhoaHoc = document.querySelectorAll('.course_item');
+	
+	cacTheKhoaHoc.forEach(function(the) {
+		the.addEventListener('mousemove', function(event) {
+			// Lấy kích thước và tọa độ của thẻ trên màn hình
+			const kichThuocThe = the.getBoundingClientRect();
+			
+			// Tính toán vị trí chuột bên trong thẻ (từ 0 đến 1)
+			// Trừ đi 0.5 để tọa độ tâm thẻ sẽ có giá trị là 0
+			// (Góc trái: -0.5, Ở giữa: 0, Góc phải: 0.5)
+			const toaDoX_Tam = ((event.clientX - kichThuocThe.left) / kichThuocThe.width) - 0.5;
+			const toaDoY_Tam = ((event.clientY - kichThuocThe.top) / kichThuocThe.height) - 0.5;
+			
+			// Tính góc xoay (nhân thêm hệ số để thẻ nghiêng nhiều hay ít)
+			const gocXoayX = toaDoX_Tam * 8; // Nghiêng sang trái/phải 8 độ
+			const gocXoayY = -toaDoY_Tam * 6; // Nghiêng lên/xuống 6 độ (dấu âm để xoay ngược hướng chuột)
+			
+			// Áp dụng CSS
+			the.style.transform = `translateY(-8px) scale(1.03) rotateY(${gocXoayX}deg) rotateX(${gocXoayY}deg)`;
+		});
+
+		// Khi chuột rời khỏi thẻ, trả thẻ về trạng thái thẳng đứng ban đầu
+		the.addEventListener('mouseleave', function() {
+			the.style.transform = '';
+		});
+	});
+</script>
 
 </body>
 </html>
