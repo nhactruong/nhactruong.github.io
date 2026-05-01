@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nhạc Trưởng Entertainment</title>
+<style>
+  /* ── RESET & BASE ── */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0c0c0e;
+    --surface: #141417;
+    --border: rgba(255,255,255,0.08);
+    --border-active: rgba(255,255,255,0.25);
+    --accent: #b8ff65;
+    --accent-dim: rgba(184,255,101,0.15);
+    --text: #e8e6df;
+    --text-muted: #666;
+    --text-dim: #3a3a3a;
+    --red: #ff5c5c;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* ── LOADING SCREEN ── */
+  #screen-loading {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--bg);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 32px;
+  }
+  .loading-logo {
+    font-size: 56px; font-weight: 800;
+    letter-spacing: -3px; line-height: 1;
+  }
+  .loading-logo em { font-style: normal; color: var(--accent); }
+  .loading-bar-wrap {
+    width: 200px; height: 2px;
+    background: var(--border);
+    border-radius: 2px; overflow: hidden;
+  }
+  .loading-bar {
+    height: 100%; width: 0%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+  .loading-text {
+    font-size: 10px; letter-spacing: 3px;
+    color: var(--text-muted); text-transform: uppercase;
+  }
+
+  /* ── SPLASH SCREEN ── */
+  #screen-splash {
+    position: fixed; inset: 0; z-index: 500;
+    background: var(--bg);
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 0;
+  }
+  .splash-logo {
+    font-size: clamp(64px, 14vw, 128px);
+    font-weight: 800; letter-spacing: -6px; line-height: 1;
+    margin-bottom: 12px;
+  }
+  .splash-logo em { font-style: normal; color: var(--accent); }
+  .splash-desc {
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 64px; text-align: center; line-height: 2;
+  }
+  .splash-btn {
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 14px 52px;
+    background: transparent;
+    border: 1px solid var(--border-active);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    outline: none;
+  }
+  .splash-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0c0c0e;
+  }
+
+  /* ── ROTATE OVERLAY ── */
+  #screen-rotate {
+    position: fixed; inset: 0; z-index: 800;
+    background: var(--bg);
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 24px;
+  }
+  .rotate-icon { font-size: 64px; animation: rotateAnim 2s ease-in-out infinite; }
+  @keyframes rotateAnim {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+  }
+  .rotate-text { font-size: 12px; color: var(--text-muted); letter-spacing: 2px; text-align: center; line-height: 2; }
+
+  /* ── MAIN APP ── */
+  #screen-app {
+    position: fixed; inset: 0; z-index: 10;
+    display: none;
+  }
+
+  /* Camera + canvas layer */
+  #cam-wrap {
+    position: absolute; inset: 0;
+    background: #000;
+  }
+  #video {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+    opacity: 0.85;
+  }
+  #canvas-hand {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+  }
+
+  /* scanlines */
+  #cam-wrap::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0px, transparent 3px,
+      rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px
+    );
+    pointer-events: none; z-index: 2;
+  }
+
+  /* ── HUD OVERLAY ── */
+  #hud {
+    position: absolute; inset: 0; z-index: 10;
+    display: flex; flex-direction: column;
+    pointer-events: none;
+  }
+
+  /* TOP BAR */
+  #hud-top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    padding: 20px 24px 0;
+    background: linear-gradient(to bottom, rgba(12,12,14,0.85) 0%, transparent 100%);
+    padding-bottom: 40px;
+  }
+  .hud-logo {
+    font-size: 20px; font-weight: 800; letter-spacing: -1px;
+  }
+  .hud-logo em { font-style: normal; color: var(--accent); }
+
+  /* STATS row */
+  #hud-stats {
+    display: flex; gap: 2px; align-items: stretch;
+  }
+  .stat-block {
+    display: flex; flex-direction: column;
+    align-items: flex-end;
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    background: rgba(12,12,14,0.6);
+    backdrop-filter: blur(8px);
+    min-width: 90px;
+  }
+  .stat-label {
+    font-size: 8px; letter-spacing: 2px;
+    color: var(--text-muted); text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .stat-value {
+    font-size: 15px; font-weight: 700;
+    color: var(--accent); letter-spacing: -0.5px;
+  }
+  .stat-value.inactive { color: var(--text-dim); }
+
+  /* CENTER GUIDE */
+  #hud-center {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+  }
+  #hand-prompt {
+    text-align: center;
+    transition: opacity 0.4s;
+  }
+  #hand-prompt.hidden { opacity: 0; }
+  .prompt-ring {
+    width: 120px; height: 120px;
+    border: 1px dashed rgba(255,255,255,0.15);
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 52px;
+    animation: breathe 3s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); border-color: rgba(255,255,255,0.1); }
+    50% { transform: scale(1.05); border-color: rgba(255,255,255,0.22); }
+  }
+  .prompt-text {
+    font-size: 10px; letter-spacing: 3px;
+    color: var(--text-muted); text-transform: uppercase;
+  }
+
+  /* NOTE DISPLAY (center-top) */
+  #note-big {
+    position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    text-align: center; pointer-events: none; z-index: 12;
+    opacity: 0; transition: opacity 0.15s;
+  }
+  #note-big.visible { opacity: 1; }
+  .note-letter {
+    font-size: clamp(80px, 18vw, 160px);
+    font-weight: 800; letter-spacing: -8px; line-height: 0.9;
+    color: rgba(255,255,255,0.08);
+  }
+  .note-hz {
+    font-size: 13px; color: var(--text-muted); letter-spacing: 2px; margin-top: 8px;
+  }
+
+  /* BOTTOM: Controls + Waveform */
+  #hud-bottom {
+    padding: 0 0 0 0;
+    background: linear-gradient(to top, rgba(12,12,14,0.92) 0%, transparent 100%);
+    padding-top: 60px;
+    pointer-events: all;
+  }
+
+  /* WAVEFORM */
+  #waveform-wrap {
+    padding: 0 24px 12px;
+    height: 52px;
+  }
+  #canvas-wave {
+    width: 100%; height: 40px; display: block;
+  }
+
+  /* CONTROLS */
+  #controls {
+    display: flex; align-items: flex-end;
+    border-top: 1px solid var(--border);
+    background: rgba(12,12,14,0.7);
+    backdrop-filter: blur(16px);
+  }
+
+  .ctrl-section {
+    flex: 1;
+    padding: 16px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .ctrl-section:last-child { border-right: none; }
+
+  .ctrl-title {
+    font-size: 8px; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .btn-group {
+    display: flex; gap: 4px; flex-wrap: wrap;
+  }
+  .tog-btn {
+    font-family: var(--font-mono);
+    font-size: 9px; letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    outline: none;
+    white-space: nowrap;
+  }
+  .tog-btn:hover { border-color: var(--border-active); color: var(--text); }
+  .tog-btn.on {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  /* CHECKBOX style toggles */
+  .check-btn {
+    display: flex; align-items: center; gap: 7px;
+    font-family: var(--font-mono);
+    font-size: 9px; letter-spacing: 1px;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 5px 0;
+    background: none; border: none; outline: none;
+    text-transform: uppercase;
+    transition: color 0.15s;
+  }
+  .check-btn .box {
+    width: 13px; height: 13px;
+    border: 1px solid var(--border-active);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: transparent; transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .check-btn.on { color: var(--text); }
+  .check-btn.on .box { background: var(--accent); border-color: var(--accent); color: #0c0c0e; }
+
+  /* MODE section has checkboxes */
+  .check-group { display: flex; flex-direction: column; gap: 4px; }
+
+  /* HANDS count corner */
+  #hands-badge {
+    position: absolute; bottom: 0; right: 0;
+    padding: 16px 24px;
+    font-size: 9px; letter-spacing: 2px;
+    color: var(--text-dim); text-transform: uppercase;
+    pointer-events: none;
+    display: flex; gap: 8px; align-items: center;
+  }
+  #hands-count { color: var(--accent); }
+
+  /* ── PERMISSION ERROR ── */
+  #cam-error {
+    position: absolute; inset: 0; z-index: 50;
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 16px; text-align: center;
+    background: var(--bg);
+  }
+  #cam-error .err-icon { font-size: 48px; }
+  #cam-error h2 { font-size: 16px; color: var(--red); }
+  #cam-error p { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; }
+  #cam-error button {
+    font-family: var(--font-mono);
+    font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 10px 28px;
+    background: transparent;
+    border: 1px solid var(--red);
+    color: var(--red); cursor: pointer;
+    transition: all 0.2s; outline: none; margin-top: 8px;
+  }
+  #cam-error button:hover { background: var(--red); color: #fff; }
+
+</style>
+</head>
+<body>
+
+<!-- ── LOADING ── -->
+<div id="screen-loading">
+  <div class="loading-logo">Nhạc<em>Trưởng</em></div>
+  <div class="loading-bar-wrap"><div class="loading-bar" id="load-bar"></div></div>
+  <div class="loading-text" id="load-text">Đang tải thư viện...</div>
+</div>
+
+<!-- ── SPLASH ── -->
+<div id="screen-splash">
+  <div class="splash-logo">Nhạc <em>Trưởng</em></div>
+  <div class="splash-desc">
+    Có hai chế độ để khám phá.<br>
+    Hãy tận hưởng!<br><br>
+    Bạn cần cấp quyền camera để bắt đầu.
+  </div>
+  <button class="splash-btn" id="btn-start">▶ &nbsp; Bắt đầu</button>
+</div>
+
+<!-- ── ROTATE NOTICE (portrait) ── -->
+<div id="screen-rotate">
+  <div class="rotate-icon">📱</div>
+  <div class="rotate-text">Nhạc Trưởng hoạt động ở chế độ ngang.<br>Vui lòng xoay thiết bị.</div>
+</div>
+
+<!-- ── MAIN APP ── -->
+<div id="screen-app">
+  <!-- Camera -->
+  <div id="cam-wrap">
+    <video id="video" playsinline autoplay muted></video>
+    <canvas id="canvas-hand"></canvas>
+  </div>
+
+  <!-- Camera permission error -->
+  <div id="cam-error">
+    <div class="err-icon">📷</div>
+    <h2>Không thể truy cập camera</h2>
+    <p>Vui lòng cấp quyền camera và thử lại.</p>
+    <button onclick="location.reload()">Thử lại</button>
+  </div>
+
+  <!-- Note Display (background) -->
+  <div id="note-big">
+    <div class="note-letter" id="note-letter">C</div>
+    <div class="note-hz" id="note-hz">261 Hz</div>
+  </div>
+
+  <!-- HUD -->
+  <div id="hud">
+    <!-- TOP -->
+    <div id="hud-top">
+      <div class="hud-logo">Nhạc<em>Trưởng</em></div>
+      <div id="hud-stats">
+        <div class="stat-block">
+          <div class="stat-label">Melody</div>
+          <div class="stat-value inactive" id="stat-melody">--- Hz</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-label">Volume</div>
+          <div class="stat-value inactive" id="stat-volume">---</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-label">R-Pinch</div>
+          <div class="stat-value inactive" id="stat-pinch">---</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-label">Chord</div>
+          <div class="stat-value inactive" id="stat-chord">---</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER GUIDE -->
+    <div id="hud-center">
+      <div id="hand-prompt">
+        <div class="prompt-ring">✋</div>
+        <div class="prompt-text">Giơ tay vào camera</div>
+      </div>
+    </div>
+
+    <!-- BOTTOM -->
+    <div id="hud-bottom">
+      <!-- Waveform -->
+      <div id="waveform-wrap">
+        <canvas id="canvas-wave"></canvas>
+      </div>
+
+      <!-- Controls -->
+      <div id="controls">
+
+        <!-- MODE -->
+        <div class="ctrl-section" style="flex:1.4">
+          <div class="ctrl-title">Mode</div>
+          <div class="check-group">
+            <button class="check-btn" id="mode-twochord" data-mode="twochord">
+              <span class="box">✓</span> Two-hand Chord
+            </button>
+            <button class="check-btn on" id="mode-melodychord" data-mode="melodychord">
+              <span class="box">✓</span> Melody + Chord
+            </button>
+            <button class="check-btn" id="mode-snap" data-mode="snap">
+              <span class="box">✓</span> Snap
+            </button>
+            <button class="check-btn" id="mode-simple" data-mode="simple">
+              <span class="box">✓</span> Simple (ABCDEFG)
+            </button>
+          </div>
+        </div>
+
+        <!-- SCALE -->
+        <div class="ctrl-section">
+          <div class="ctrl-title">Scale</div>
+          <div class="btn-group">
+            <button class="tog-btn on" data-group="scale" data-val="major">Major</button>
+            <button class="tog-btn" data-group="scale" data-val="pentatonic">Pentatonic</button>
+            <button class="tog-btn" data-group="scale" data-val="minor">Minor</button>
+            <button class="tog-btn" data-group="scale" data-val="blues">Blues</button>
+            <button class="tog-btn" data-group="scale" data-val="chromatic">Chromatic</button>
+          </div>
+        </div>
+
+        <!-- WAVE -->
+        <div class="ctrl-section">
+          <div class="ctrl-title">Wave</div>
+          <div class="btn-group">
+            <button class="tog-btn on" data-group="wave" data-val="sine">Sine</button>
+            <button class="tog-btn" data-group="wave" data-val="triangle">Triangle</button>
+            <button class="tog-btn" data-group="wave" data-val="sawtooth">Saw</button>
+            <button class="tog-btn" data-group="wave" data-val="square">Square</button>
+          </div>
+        </div>
+
+        <!-- RANGE -->
+        <div class="ctrl-section">
+          <div class="ctrl-title">Range</div>
+          <div class="btn-group">
+            <button class="tog-btn" data-group="range" data-val="2">2 oct</button>
+            <button class="tog-btn on" data-group="range" data-val="3">3 oct</button>
+            <button class="tog-btn" data-group="range" data-val="4">4 oct</button>
+          </div>
+        </div>
+
+      </div><!-- /controls -->
+    </div><!-- /hud-bottom -->
+
+    <!-- Hands badge -->
+    <div id="hands-badge">
+      Hands: <span id="hands-count">0</span>
+    </div>
+
+  </div><!-- /hud -->
+</div><!-- /screen-app -->
+
+<!-- MediaPipe CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+
+<script>
+/* ═══════════════════════════════════════════════
+   SOUNDGO — Full Clone
+   ═══════════════════════════════════════════════ */
+
+// ── STATE ──
+const S = {
+  mode: 'melodychord',  // twochord | melodychord | snap | simple
+  scale: 'major',
+  wave: 'sine',
+  range: 3,
+  handCount: 0,
+  isPlaying: false,
+  pinchDist: 0,
+  snapCooldown: 0,
+};
+
+// ── SCALES (semitone offsets from root) ──
+const SCALES = {
+  major:      [0,2,4,5,7,9,11,12,14,16,17,19,21,23,24,26,28,29,31,33,35,36,38,40,41,43,45,47,48],
+  pentatonic: [0,2,4,7,9,12,14,16,19,21,24,26,28,31,33,36,38,40,43,45,48],
+  minor:      [0,2,3,5,7,8,10,12,14,15,17,19,20,22,24,26,27,29,31,32,34,36,38,39,41,43,44,46,48],
+  blues:      [0,3,5,6,7,10,12,15,17,18,19,22,24,27,29,30,31,34,36,39,41,42,43,46,48],
+  chromatic:  Array.from({length:49},(_,i)=>i),
+  simple:     [0,2,4,5,7,9,11,12,14,16,17,19,21,23,24], // ABCDEFG = C D E F G A B
+};
+
+const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const BASE_MIDI  = 48; // C3
+
+function midiToFreq(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+function midiName(m)   { return NOTE_NAMES[m % 12]; }
+
+// ── AUDIO ENGINE ──
+let ctx = null;
+let masterGain = null;
+let analyser   = null;
+let wfBuf      = null;
+
+const oscs = {}; // keyed oscillator nodes
+
+function audioInit() {
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = ctx.createGain();
+  masterGain.gain.value = 0.7;
+  analyser = ctx.createAnalyser();
+  analyser.fftSize = 512;
+  wfBuf = new Uint8Array(analyser.frequencyBinCount);
+  masterGain.connect(analyser);
+  analyser.connect(ctx.destination);
+}
+
+function noteOn(id, freq, vol=0.3) {
+  if (!ctx) return;
+  noteOff(id);
+  const osc  = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = S.wave;
+  osc.frequency.setValueAtTime(freq, ctx.currentTime);
+  gain.gain.setValueAtTime(0, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(vol, ctx.currentTime + 0.025);
+  osc.connect(gain);
+  gain.connect(masterGain);
+  osc.start();
+  oscs[id] = { osc, gain };
+}
+
+function noteUpdate(id, freq, vol) {
+  if (!oscs[id]) { noteOn(id, freq, vol); return; }
+  const { osc, gain } = oscs[id];
+  osc.type = S.wave;
+  osc.frequency.setTargetAtTime(freq, ctx.currentTime, 0.02);
+  if (vol !== undefined)
+    gain.gain.setTargetAtTime(vol, ctx.currentTime, 0.02);
+}
+
+function noteOff(id) {
+  if (!oscs[id]) return;
+  const { osc, gain } = oscs[id];
+  gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.15);
+  const _osc = osc;
+  setTimeout(() => { try { _osc.stop(); } catch(e){} }, 200);
+  delete oscs[id];
+}
+
+function noteOffAll() { Object.keys(oscs).forEach(noteOff); }
+
+function playSnap() {
+  if (!ctx) return;
+  const buf  = ctx.createBuffer(1, ctx.sampleRate * 0.06, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i=0; i<data.length; i++) data[i] = (Math.random()*2-1) * Math.exp(-i/(data.length*0.2));
+  const src  = ctx.createBufferSource();
+  const bpf  = ctx.createBiquadFilter();
+  const gain = ctx.createGain();
+  bpf.type = 'bandpass'; bpf.frequency.value = 3000; bpf.Q.value = 1.5;
+  gain.gain.value = 0.6;
+  src.buffer = buf;
+  src.connect(bpf); bpf.connect(gain); gain.connect(masterGain);
+  src.start();
+}
+
+// ── HAND LANDMARK HELPERS ──
+// Landmarks: 0=wrist, 4=thumb-tip, 8=index-tip, 12=mid-tip, 16=ring-tip, 20=pinky-tip
+const TIPS  = [4,8,12,16,20];
+const PIPS  = [3,6,10,14,18];
+
+function countExtended(lm) {
+  let n = 0;
+  // thumb: compare x (mirrored)
+  if (lm[4].x < lm[3].x) n++;
+  // other fingers: tip y < pip y
+  for (let i=1; i<5; i++) {
+    if (lm[TIPS[i]].y < lm[PIPS[i]].y) n++;
+  }
+  return n;
+}
+
+function pinchDistance(lm) {
+  // thumb-tip (4) vs index-tip (8)
+  const dx = lm[4].x - lm[8].x;
+  const dy = lm[4].y - lm[8].y;
+  return Math.sqrt(dx*dx + dy*dy);
+}
+
+function wristX(lm) { return lm[0].x; } // 0=left edge, 1=right (raw, mirrored)
+function wristY(lm) { return lm[0].y; } // 0=top, 1=bottom
+
+// Map x position (0-1) to scale step
+function xToNote(x) {
+  // x is raw (0=right in camera, 1=left). We mirror: 0=left screen, 1=right screen
+  const t = 1 - x;
+  const steps = SCALES[S.mode === 'simple' ? 'simple' : S.scale];
+  const rangeSteps = Math.min(S.range * 7, steps.length - 1);
+  const idx = Math.round(t * rangeSteps);
+  const semi = steps[Math.max(0, Math.min(steps.length-1, idx))];
+  const midi = BASE_MIDI + semi;
+  return { midi, freq: midiToFreq(midi), name: midiName(midi) };
+}
+
+// Map y position (0=top, 1=bottom) to volume
+function yToVol(y) { return Math.max(0.05, Math.min(0.5, 1 - y)); }
+
+// ── MEDIAPIPE ──
+let mpHands  = null;
+let mpCamera = null;
+let lastResults = null;
+
+function setupMediaPipe() {
+  const video = document.getElementById('video');
+  mpHands = new Hands({
+    locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`
+  });
+  mpHands.setOptions({
+    maxNumHands: 2,
+    modelComplexity: 1,
+    minDetectionConfidence: 0.75,
+    minTrackingConfidence: 0.6,
+  });
+  mpHands.onResults(onResults);
+  mpCamera = new Camera(video, {
+    onFrame: async () => { await mpHands.send({ image: video }); },
+    width: 1280, height: 720,
+  });
+  mpCamera.start();
+}
+
+// ── RESULTS PROCESSING ──
+function onResults(res) {
+  lastResults = res;
+  const hands = res.multiHandLandmarks || [];
+  S.handCount = hands.length;
+  document.getElementById('hands-count').textContent = hands.length;
+
+  const prompt = document.getElementById('hand-prompt');
+  const noteBig = document.getElementById('note-big');
+
+  if (hands.length === 0) {
+    noteOffAll();
+    prompt.classList.remove('hidden');
+    noteBig.classList.remove('visible');
+    setStats({ melody:'--- Hz', volume:'---', pinch:'---', chord:'---' });
+    return;
+  }
+
+  prompt.classList.add('hidden');
+  noteBig.classList.add('visible');
+
+  // Identify hands by handedness
+  const handedness = res.multiHandedness || [];
+  let leftLm = null, rightLm = null;
+  hands.forEach((lm, i) => {
+    const label = handedness[i]?.label || 'Right';
+    // MediaPipe labels are from camera's perspective; mirrored = swap
+    if (label === 'Left')  rightLm = lm;
+    else                   leftLm  = lm;
+  });
+
+  // Use first hand as right if only one
+  if (hands.length === 1) rightLm = hands[0];
+
+  processHands(rightLm, leftLm);
+}
+
+function processHands(rightLm, leftLm) {
+  if (!rightLm) { noteOffAll(); return; }
+
+  const note   = xToNote(wristX(rightLm));
+  const vol    = yToVol(wristY(rightLm));
+  const pinch  = pinchDistance(rightLm);
+  const fingers = countExtended(rightLm);
+  S.pinchDist  = pinch;
+
+  // Update big note display
+  document.getElementById('note-letter').textContent = note.name;
+  document.getElementById('note-hz').textContent     = Math.round(note.freq) + ' Hz';
+
+  // ── MODE LOGIC ──
+  if (S.mode === 'snap') {
+    // Play note on pinch
+    const isPinching = pinch < 0.05;
+    if (isPinching && S.snapCooldown <= 0) {
+      noteOn('snap', note.freq, 0.4);
+      S.snapCooldown = 18;
+      playSnap();
+    }
+    S.snapCooldown = Math.max(0, S.snapCooldown - 1);
+    if (!isPinching) noteOff('snap');
+
+  } else if (S.mode === 'simple') {
+    noteUpdate('melody', note.freq, vol);
+
+  } else if (S.mode === 'melodychord') {
+    // Right hand = melody pitch (x=note, y=volume)
+    noteUpdate('melody', note.freq, vol);
+
+    // Left hand = chord (if present)
+    if (leftLm) {
+      const chordNote = xToNote(wristX(leftLm));
+      const chordVol  = yToVol(wristY(leftLm)) * 0.4;
+      // Play major triad
+      noteUpdate('chord0', midiToFreq(chordNote.midi),     chordVol);
+      noteUpdate('chord1', midiToFreq(chordNote.midi + 4), chordVol * 0.8);
+      noteUpdate('chord2', midiToFreq(chordNote.midi + 7), chordVol * 0.8);
+      setStats({ chord: chordNote.name });
+    } else {
+      noteOff('chord0'); noteOff('chord1'); noteOff('chord2');
+      setStats({ chord: '---' });
+    }
+
+  } else if (S.mode === 'twochord') {
+    // Right hand = chord root + x position, left hand = melody
+    const chordVol = vol * 0.35;
+    noteUpdate('chord0', midiToFreq(note.midi),     chordVol);
+    noteUpdate('chord1', midiToFreq(note.midi + 4), chordVol * 0.8);
+    noteUpdate('chord2', midiToFreq(note.midi + 7), chordVol * 0.8);
+
+    if (leftLm) {
+      const melNote = xToNote(wristX(leftLm));
+      const melVol  = yToVol(wristY(leftLm));
+      noteUpdate('melody', melNote.freq, melVol);
+      document.getElementById('note-letter').textContent = melNote.name;
+      document.getElementById('note-hz').textContent     = Math.round(melNote.freq) + ' Hz';
+      setStats({ melody: Math.round(melNote.freq) + ' Hz', volume: Math.round(melVol*100)+'%' });
+    } else {
+      noteOff('melody');
+    }
+  }
+
+  // Update master volume by pinch distance on right hand (melodychord mode)
+  if (S.mode === 'melodychord' || S.mode === 'simple') {
+    // pinch = 0 (closed) → louder; pinch > 0.15 = open
+    const pinchVol = Math.max(0, Math.min(1, 1 - pinch * 5));
+    if (masterGain) masterGain.gain.setTargetAtTime(0.3 + pinchVol * 0.5, ctx.currentTime, 0.05);
+  }
+
+  setStats({
+    melody: Math.round(note.freq) + ' Hz',
+    volume: Math.round(vol * 100) + '%',
+    pinch: pinch < 0.05 ? 'PINCH' : Math.round((1-pinch*6)*100).toFixed(0) + '%',
+  });
+}
+
+function setStats({ melody, volume, pinch, chord }) {
+  const set = (id, val) => {
+    if (val === undefined) return;
+    const el = document.getElementById(id);
+    el.textContent = val;
+    el.classList.toggle('inactive', val === '---' || val === '--- Hz');
+  };
+  set('stat-melody', melody);
+  set('stat-volume', volume);
+  set('stat-pinch', pinch);
+  set('stat-chord', chord);
+}
+
+// ── CANVAS DRAWING ──
+const HAND_CONNECTIONS = [
+  [0,1],[1,2],[2,3],[3,4],       // thumb
+  [0,5],[5,6],[6,7],[7,8],       // index
+  [5,9],[9,10],[10,11],[11,12],  // middle
+  [9,13],[13,14],[14,15],[15,16],// ring
+  [13,17],[17,18],[18,19],[19,20],// pinky
+  [0,17]                         // palm outer
+];
+
+function drawHands() {
+  const canvas = document.getElementById('canvas-hand');
+  const ctx2   = canvas.getContext('2d');
+  canvas.width  = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  ctx2.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (!lastResults || !lastResults.multiHandLandmarks) return;
+
+  lastResults.multiHandLandmarks.forEach((lm, hIdx) => {
+    const W = canvas.width, H = canvas.height;
+
+    // Connections
+    ctx2.strokeStyle = 'rgba(184,255,101,0.45)';
+    ctx2.lineWidth = 1.5;
+    ctx2.lineJoin = 'round';
+    HAND_CONNECTIONS.forEach(([a,b]) => {
+      ctx2.beginPath();
+      ctx2.moveTo((1-lm[a].x)*W, lm[a].y*H);
+      ctx2.lineTo((1-lm[b].x)*W, lm[b].y*H);
+      ctx2.stroke();
+    });
+
+    // Joints
+    lm.forEach((pt, i) => {
+      const x = (1-pt.x)*W, y = pt.y*H;
+      const isTip = TIPS.includes(i);
+      ctx2.beginPath();
+      ctx2.arc(x, y, isTip ? 5 : 2.5, 0, Math.PI*2);
+      ctx2.fillStyle = isTip ? '#b8ff65' : 'rgba(184,255,101,0.7)';
+      ctx2.fill();
+    });
+
+    // Index-tip crosshair + note label
+    const tip = lm[8];
+    const tx = (1-tip.x)*W, ty = tip.y*H;
+    ctx2.strokeStyle = 'rgba(184,255,101,0.3)';
+    ctx2.lineWidth = 0.5;
+    ctx2.setLineDash([4,4]);
+    ctx2.beginPath(); ctx2.moveTo(tx,0); ctx2.lineTo(tx,H); ctx2.stroke();
+    ctx2.beginPath(); ctx2.moveTo(0,ty); ctx2.lineTo(W,ty); ctx2.stroke();
+    ctx2.setLineDash([]);
+  });
+}
+
+// Waveform
+function drawWaveform() {
+  const canvas = document.getElementById('canvas-wave');
+  const ctx2   = canvas.getContext('2d');
+  const W = canvas.offsetWidth, H = 40;
+  canvas.width  = W;
+  canvas.height = H;
+  ctx2.clearRect(0,0,W,H);
+
+  if (analyser && wfBuf) {
+    analyser.getByteTimeDomainData(wfBuf);
+    ctx2.beginPath();
+    ctx2.strokeStyle = S.handCount > 0 ? 'rgba(184,255,101,0.7)' : 'rgba(255,255,255,0.1)';
+    ctx2.lineWidth = 1.5;
+    const step = W / wfBuf.length;
+    for (let i=0; i<wfBuf.length; i++) {
+      const v = wfBuf[i]/128 - 1;
+      const x = i*step, y = H/2 + v*(H/2.2);
+      i===0 ? ctx2.moveTo(x,y) : ctx2.lineTo(x,y);
+    }
+    ctx2.stroke();
+  } else {
+    ctx2.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx2.lineWidth = 1;
+    ctx2.beginPath(); ctx2.moveTo(0,H/2); ctx2.lineTo(W,H/2); ctx2.stroke();
+  }
+}
+
+// ── RENDER LOOP ──
+function loop() {
+  drawHands();
+  drawWaveform();
+  requestAnimationFrame(loop);
+}
+
+// ── UI CONTROLS ──
+function setupControls() {
+  // Toggle buttons (radio within group)
+  document.querySelectorAll('.tog-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const group = btn.dataset.group;
+      document.querySelectorAll(`.tog-btn[data-group="${group}"]`).forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      S[group] = btn.dataset.val;
+      if (group === 'range') S.range = parseInt(btn.dataset.val);
+    });
+  });
+
+  // Mode checkboxes (exclusive)
+  document.querySelectorAll('.check-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.check-btn').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      S.mode = btn.dataset.mode;
+      noteOffAll();
+    });
+  });
+}
+
+// ── ORIENTATION CHECK ──
+function checkOrientation() {
+  if (window.innerWidth < window.innerHeight && window.innerWidth < 768) {
+    document.getElementById('screen-rotate').style.display = 'flex';
+  } else {
+    document.getElementById('screen-rotate').style.display = 'none';
+  }
+}
+
+// ── BOOT SEQUENCE ──
+async function boot() {
+  const bar  = document.getElementById('load-bar');
+  const text = document.getElementById('load-text');
+
+  // Fake progress while MediaPipe loads
+  let p = 0;
+  const progress = (to, label) => new Promise(res => {
+    text.textContent = label;
+    const int = setInterval(() => {
+      p = Math.min(p+2, to);
+      bar.style.width = p + '%';
+      if (p >= to) { clearInterval(int); res(); }
+    }, 30);
+  });
+
+  await progress(30, 'Đang tải thư viện...');
+  await progress(70, 'Đang khởi tạo mô hình...');
+  await progress(100, 'Sẵn sàng!');
+  await new Promise(r => setTimeout(r, 400));
+
+  document.getElementById('screen-loading').style.display = 'none';
+  document.getElementById('screen-splash').style.display  = 'flex';
+
+  document.getElementById('btn-start').addEventListener('click', startApp);
+}
+
+async function startApp() {
+  document.getElementById('screen-splash').style.display = 'none';
+  document.getElementById('screen-app').style.display    = 'block';
+
+  // Init audio on gesture
+  audioInit();
+
+  // Camera
+  try {
+    await navigator.mediaDevices.getUserMedia({ video: { facingMode:'user', width:1280, height:720 } });
+    setupMediaPipe();
+  } catch(e) {
+    document.getElementById('cam-error').style.display = 'flex';
+    return;
+  }
+
+  setupControls();
+  checkOrientation();
+  window.addEventListener('resize', checkOrientation);
+  loop();
+}
+
+window.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>
