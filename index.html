@@ -1,1012 +1,1042 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nhạc Trưởng</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nhạc Trưởng</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&display=swap');
 
-  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-  :root {
-    --bg: #080810;
-    --border: rgba(255,255,255,0.07);
-    --border-active: rgba(255,255,255,0.22);
-    --accent: #c8ff57;
-    --accent-dim: rgba(200,255,87,0.12);
-    --blue: #4da8ff;
-    --blue-dim: rgba(77,168,255,0.12);
-    --text: #ddd8cc;
-    --text-muted: #555;
-    --text-dim: #2a2a35;
-    --red: #ff5050;
-    --font: 'Space Mono', monospace;
-    --font-display: 'Bebas Neue', sans-serif;
-  }
+    :root {
+      --bg: #080810;
+      --border: rgba(255,255,255,0.07);
+      --border-active: rgba(255,255,255,0.22);
+      --accent: #c8ff57;
+      --accent-dim: rgba(200,255,87,0.12);
+      --blue: #4da8ff;
+      --blue-dim: rgba(77,168,255,0.12);
+      --text: #ddd8cc;
+      --text-muted: #555;
+      --text-dim: #2a2a35;
+      --red: #ff5050;
+      --font: 'Space Mono', monospace;
+      --font-display: 'Bebas Neue', sans-serif;
+    }
 
-  html, body { width:100%; height:100%; background:var(--bg); color:var(--text); font-family:var(--font); overflow:hidden; user-select:none; -webkit-user-select:none; }
+    html, body { width:100%; height:100%; background:var(--bg); color:var(--text); font-family:var(--font); overflow:hidden; user-select:none; -webkit-user-select:none; }
 
-  /* LOADING */
-  #screen-loading { position:fixed; inset:0; z-index:9999; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:28px; }
-  .loading-logo { font-family:var(--font-display); font-size:64px; letter-spacing:4px; }
-  .loading-logo em { font-style:normal; color:var(--accent); }
-  .loading-bar-wrap { width:180px; height:1px; background:var(--border); }
-  .loading-bar { height:100%; width:0%; background:var(--accent); transition:width 0.3s ease; }
-  .loading-text { font-size:9px; letter-spacing:4px; color:var(--text-muted); text-transform:uppercase; }
+    /* LOADING */
+    #screen-loading { position:fixed; inset:0; z-index:9999; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:28px; }
+    .loading-logo { font-family:var(--font-display); font-size:64px; letter-spacing:4px; }
+    .loading-logo em { font-style:normal; color:var(--accent); }
+    .loading-bar-wrap { width:180px; height:1px; background:var(--border); }
+    .loading-bar { height:100%; width:0%; background:var(--accent); transition:width 0.3s ease; }
+    .loading-text { font-size:9px; letter-spacing:4px; color:var(--text-muted); text-transform:uppercase; }
 
-  /* SPLASH */
-  #screen-splash { position:fixed; inset:0; z-index:500; background:var(--bg); display:none; flex-direction:column; align-items:center; justify-content:center; }
-  .splash-logo { font-family:var(--font-display); font-size:clamp(80px,16vw,160px); letter-spacing:8px; margin-bottom:16px; }
-  .splash-logo em { font-style:normal; color:var(--accent); }
-  .splash-desc { font-size:10px; color:var(--text-muted); letter-spacing:3px; text-transform:uppercase; margin-bottom:60px; text-align:center; line-height:2.4; }
-  .splash-btn { font-family:var(--font); font-size:10px; letter-spacing:5px; text-transform:uppercase; padding:16px 60px; background:transparent; border:1px solid var(--accent); color:var(--accent); cursor:pointer; transition:all 0.2s; outline:none; }
-  .splash-btn:hover { background:var(--accent); color:#080810; }
+    /* SPLASH */
+    #screen-splash { position:fixed; inset:0; z-index:500; background:var(--bg); display:none; flex-direction:column; align-items:center; justify-content:center; }
+    .splash-logo { font-family:var(--font-display); font-size:clamp(80px,16vw,160px); letter-spacing:8px; margin-bottom:16px; }
+    .splash-logo em { font-style:normal; color:var(--accent); }
+    .splash-desc { font-size:10px; color:var(--text-muted); letter-spacing:3px; text-transform:uppercase; margin-bottom:60px; text-align:center; line-height:2.4; }
+    .splash-btn { font-family:var(--font); font-size:10px; letter-spacing:5px; text-transform:uppercase; padding:16px 60px; background:transparent; border:1px solid var(--accent); color:var(--accent); cursor:pointer; transition:all 0.2s; outline:none; }
+    .splash-btn:hover { background:var(--accent); color:#080810; }
 
-  /* ROTATE */
-  #screen-rotate { position:fixed; inset:0; z-index:800; background:var(--bg); display:none; flex-direction:column; align-items:center; justify-content:center; gap:24px; }
-  .rotate-icon { font-size:56px; animation:rotA 2s ease-in-out infinite; }
-  @keyframes rotA { 0%,100%{transform:rotate(0deg)} 50%{transform:rotate(90deg)} }
-  .rotate-text { font-size:10px; color:var(--text-muted); letter-spacing:2px; text-align:center; line-height:2; }
+    /* ROTATE */
+    #screen-rotate { position:fixed; inset:0; z-index:800; background:var(--bg); display:none; flex-direction:column; align-items:center; justify-content:center; gap:24px; }
+    .rotate-icon { font-size:56px; animation:rotA 2s ease-in-out infinite; }
+    @keyframes rotA { 0%,100%{transform:rotate(0deg)} 50%{transform:rotate(90deg)} }
+    .rotate-text { font-size:10px; color:var(--text-muted); letter-spacing:2px; text-align:center; line-height:2; }
 
-  /* MAIN APP */
-  #screen-app { position:fixed; inset:0; z-index:10; display:none; }
-  #cam-wrap { position:absolute; inset:0; background:#000; }
-  #video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scaleX(-1); opacity:0.75; }
-  #canvas-hand { position:absolute; inset:0; width:100%; height:100%; }
-  #cam-wrap::after { content:''; position:absolute; inset:0; background:repeating-linear-gradient(0deg,transparent 0px,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px); pointer-events:none; z-index:2; }
+    /* MAIN APP */
+    #screen-app { position:fixed; inset:0; z-index:10; display:none; }
+    #cam-wrap { position:absolute; inset:0; background:#000; }
+    #video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scaleX(-1); opacity:0.75; }
+    #canvas-hand { position:absolute; inset:0; width:100%; height:100%; }
+    #cam-wrap::after { content:''; position:absolute; inset:0; background:repeating-linear-gradient(0deg,transparent 0px,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px); pointer-events:none; z-index:2; }
 
-  /* Zone divider */
-  #zone-divider { position:absolute; top:0; bottom:0; left:50%; width:1px; background:linear-gradient(to bottom,transparent 0%,rgba(255,255,255,0.06) 20%,rgba(255,255,255,0.06) 80%,transparent 100%); z-index:9; pointer-events:none; }
+    /* Zone divider */
+    #zone-divider { position:absolute; top:0; bottom:0; left:50%; width:1px; background:linear-gradient(to bottom,transparent 0%,rgba(255,255,255,0.06) 20%,rgba(255,255,255,0.06) 80%,transparent 100%); z-index:9; pointer-events:none; }
 
-  /* HUD */
-  #hud { position:absolute; inset:0; z-index:10; display:flex; flex-direction:column; pointer-events:none; }
-  #hud-top { display:flex; align-items:flex-start; justify-content:space-between; padding:18px 22px 40px; background:linear-gradient(to bottom,rgba(8,8,16,0.9),transparent); }
-  .hud-logo { font-family:var(--font-display); font-size:22px; letter-spacing:3px; }
-  .hud-logo em { font-style:normal; color:var(--accent); }
-  #hud-stats { display:flex; gap:1px; }
-  .stat-block { display:flex; flex-direction:column; align-items:flex-end; padding:7px 12px; border:1px solid var(--border); background:rgba(8,8,16,0.6); backdrop-filter:blur(10px); min-width:80px; }
-  .stat-label { font-size:7px; letter-spacing:3px; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; }
-  .stat-value { font-size:13px; font-weight:700; color:var(--accent); }
-  .stat-value.inactive { color:var(--text-dim); }
+    /* HUD */
+    #hud { position:absolute; inset:0; z-index:10; display:flex; flex-direction:column; pointer-events:none; }
+    #hud-top { display:flex; align-items:flex-start; justify-content:space-between; padding:18px 22px 40px; background:linear-gradient(to bottom,rgba(8,8,16,0.9),transparent); }
+    .hud-logo { font-family:var(--font-display); font-size:22px; letter-spacing:3px; }
+    .hud-logo em { font-style:normal; color:var(--accent); }
+    #hud-stats { display:flex; gap:1px; }
+    .stat-block { display:flex; flex-direction:column; align-items:flex-end; padding:7px 12px; border:1px solid var(--border); background:rgba(8,8,16,0.6); backdrop-filter:blur(10px); min-width:80px; }
+    .stat-label { font-size:7px; letter-spacing:3px; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; }
+    .stat-value { font-size:13px; font-weight:700; color:var(--accent); }
+    .stat-value.inactive { color:var(--text-dim); }
 
-  #hud-center { flex:1; display:flex; align-items:center; justify-content:center; position:relative; }
-  .zone-half-label { position:absolute; top:0; font-size:8px; letter-spacing:4px; text-transform:uppercase; pointer-events:none; }
-  #label-left  { left:25%; transform:translateX(-50%); color:rgba(77,168,255,0.4); }
-  #label-right { left:75%; transform:translateX(-50%); color:rgba(200,255,87,0.4); }
+    #hud-center { flex:1; display:flex; align-items:center; justify-content:center; position:relative; }
+    .zone-half-label { position:absolute; top:0; font-size:8px; letter-spacing:4px; text-transform:uppercase; pointer-events:none; }
+    #label-left  { left:25%; transform:translateX(-50%); color:rgba(77,168,255,0.4); }
+    #label-right { left:75%; transform:translateX(-50%); color:rgba(200,255,87,0.4); }
 
-  #hand-prompt { text-align:center; transition:opacity 0.4s; }
-  #hand-prompt.hidden { opacity:0; pointer-events:none; }
-  .prompt-ring { width:90px; height:90px; border:1px dashed rgba(255,255,255,0.12); border-radius:50%; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; font-size:40px; animation:breathe 3s ease-in-out infinite; }
-  @keyframes breathe { 0%,100%{transform:scale(1);border-color:rgba(255,255,255,0.08)} 50%{transform:scale(1.06);border-color:rgba(255,255,255,0.2)} }
-  .prompt-text { font-size:9px; letter-spacing:4px; color:var(--text-muted); text-transform:uppercase; }
+    #hand-prompt { text-align:center; transition:opacity 0.4s; }
+    #hand-prompt.hidden { opacity:0; pointer-events:none; }
+    .prompt-ring { width:90px; height:90px; border:1px dashed rgba(255,255,255,0.12); border-radius:50%; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; font-size:40px; animation:breathe 3s ease-in-out infinite; }
+    @keyframes breathe { 0%,100%{transform:scale(1);border-color:rgba(255,255,255,0.08)} 50%{transform:scale(1.06);border-color:rgba(255,255,255,0.2)} }
+    .prompt-text { font-size:9px; letter-spacing:4px; color:var(--text-muted); text-transform:uppercase; }
 
-  #note-big { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; pointer-events:none; z-index:8; opacity:0; transition:opacity 0.15s; }
-  #note-big.visible { opacity:1; }
-  .note-letter { font-family:var(--font-display); font-size:clamp(90px,18vw,160px); letter-spacing:-4px; line-height:0.85; color:rgba(255,255,255,0.04); }
-  .note-hz { font-size:10px; color:var(--text-muted); letter-spacing:3px; margin-top:8px; }
+    #note-big { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; pointer-events:none; z-index:8; opacity:0; transition:opacity 0.15s; }
+    #note-big.visible { opacity:1; }
+    .note-letter { font-family:var(--font-display); font-size:clamp(90px,18vw,160px); letter-spacing:-4px; line-height:0.85; color:rgba(255,255,255,0.04); }
+    .note-hz { font-size:10px; color:var(--text-muted); letter-spacing:3px; margin-top:8px; }
 
-  #hud-bottom { padding:0; background:linear-gradient(to top,rgba(8,8,16,0.95),transparent); padding-top:50px; pointer-events:all; }
-  #waveform-wrap { padding:0 22px 10px; height:44px; }
-  #canvas-wave { width:100%; height:32px; display:block; }
-  #controls { display:flex; align-items:flex-end; border-top:1px solid var(--border); background:rgba(8,8,16,0.8); backdrop-filter:blur(18px); }
-  .ctrl-section { flex:1; padding:13px 16px; border-right:1px solid var(--border); }
-  .ctrl-section:last-child { border-right:none; }
-  .ctrl-title { font-size:7px; letter-spacing:4px; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; }
-  .btn-group { display:flex; gap:3px; flex-wrap:wrap; }
-  .tog-btn { font-family:var(--font); font-size:8px; letter-spacing:1px; text-transform:uppercase; padding:5px 8px; background:transparent; border:1px solid var(--border); color:var(--text-muted); cursor:pointer; transition:all 0.15s; outline:none; white-space:nowrap; }
-  .tog-btn:hover { border-color:var(--border-active); color:var(--text); }
-  .tog-btn.on { border-color:var(--accent); color:var(--accent); background:var(--accent-dim); }
-  #mode-hint {
-    margin-top:8px;
-    font-size:8px;
-    letter-spacing:1px;
-    color:var(--text-muted);
-    line-height:1.6;
-    min-height:28px;
-  }
-  #hands-badge { position:absolute; bottom:0; right:0; padding:12px 20px; font-size:8px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; pointer-events:none; display:flex; gap:8px; align-items:center; }
-  #hands-count { color:var(--accent); }
+    #hud-bottom { padding:0; background:linear-gradient(to top,rgba(8,8,16,0.95),transparent); padding-top:50px; pointer-events:all; }
+    #waveform-wrap { padding:0 22px 10px; height:44px; }
+    #canvas-wave { width:100%; height:32px; display:block; }
+    #controls { display:flex; align-items:flex-end; border-top:1px solid var(--border); background:rgba(8,8,16,0.8); backdrop-filter:blur(18px); }
+    .ctrl-section { flex:1; padding:13px 16px; border-right:1px solid var(--border); }
+    .ctrl-section:last-child { border-right:none; }
+    .ctrl-title { font-size:7px; letter-spacing:4px; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; }
+    .btn-group { display:flex; gap:3px; flex-wrap:wrap; }
+    .tog-btn { font-family:var(--font); font-size:8px; letter-spacing:1px; text-transform:uppercase; padding:5px 8px; background:transparent; border:1px solid var(--border); color:var(--text-muted); cursor:pointer; transition:all 0.15s; outline:none; white-space:nowrap; }
+    .tog-btn:hover { border-color:var(--border-active); color:var(--text); }
+    .tog-btn.on { border-color:var(--accent); color:var(--accent); background:var(--accent-dim); }
+    #mode-hint {
+      margin-top:8px;
+      font-size:8px;
+      letter-spacing:1px;
+      color:var(--text-muted);
+      line-height:1.6;
+      min-height:28px;
+    }
+    #hands-badge { position:absolute; bottom:0; right:0; padding:12px 20px; font-size:8px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; pointer-events:none; display:flex; gap:8px; align-items:center; }
+    #hands-count { color:var(--accent); }
 
-  /* ════ HAND ZONES — split panels ════ */
-  #hand-zones { position:absolute; inset:0; z-index:9; pointer-events:none; display:grid; grid-template-columns:1fr 1fr; }
+    /* ════ HAND ZONES — split panels ════ */
+    #hand-zones { position:absolute; inset:0; z-index:9; pointer-events:none; display:grid; grid-template-columns:1fr 1fr; }
 
-  /* LEFT: Chord Wheel */
-  #zone-left { display:flex; flex-direction:column; align-items:center; justify-content:center; padding-bottom:120px; }
+    /* LEFT: Chord Wheel */
+    #zone-left { display:flex; flex-direction:column; align-items:center; justify-content:center; padding-bottom:120px; }
 
-  .wheel-card { position:relative; width:clamp(270px,34vw,420px); height:clamp(270px,34vw,420px); background:rgba(8,8,20,0.5); border:1px solid rgba(77,168,255,0.15); border-radius:50%; backdrop-filter:blur(14px); display:flex; align-items:center; justify-content:center; box-shadow:0 0 50px rgba(77,168,255,0.08),inset 0 0 30px rgba(77,168,255,0.04); transition:box-shadow 0.3s,border-color 0.3s; }
-  #zone-chord-wheel.active .wheel-card { box-shadow:0 0 70px rgba(77,168,255,0.3),inset 0 0 40px rgba(77,168,255,0.1); border-color:rgba(77,168,255,0.5); }
-  #chord-wheel-svg { width:100%; height:100%; overflow:visible; }
+    .wheel-card { position:relative; width:clamp(270px,34vw,420px); height:clamp(270px,34vw,420px); background:rgba(8,8,20,0.5); border:1px solid rgba(77,168,255,0.15); border-radius:50%; backdrop-filter:blur(14px); display:flex; align-items:center; justify-content:center; box-shadow:0 0 50px rgba(77,168,255,0.08),inset 0 0 30px rgba(77,168,255,0.04); transition:box-shadow 0.3s,border-color 0.3s; }
+    #zone-chord-wheel.active .wheel-card { box-shadow:0 0 70px rgba(77,168,255,0.3),inset 0 0 40px rgba(77,168,255,0.1); border-color:rgba(77,168,255,0.5); }
+    #chord-wheel-svg { width:100%; height:100%; overflow:visible; }
 
-  .wheel-slice-bg { fill:rgba(77,168,255,0.04); stroke:rgba(77,168,255,0.18); stroke-width:0.8; transition:fill 0.1s,stroke 0.1s; }
-  .wheel-slice-bg.active-slice { fill:rgba(77,168,255,0.28); stroke:rgba(140,210,255,0.85); stroke-width:1.5; }
-  .wheel-label { fill:rgba(150,210,255,0.5); font-family:'Space Mono','Courier New',monospace; font-size:8.5px; font-weight:700; text-anchor:middle; dominant-baseline:middle; pointer-events:none; transition:fill 0.1s; }
-  .wheel-label.active-label { fill:#fff; font-size:10px; }
-  .wheel-tick { stroke:rgba(77,168,255,0.25); stroke-width:1; }
-  .wheel-tick.active-tick { stroke:rgba(140,210,255,0.9); stroke-width:2; }
-  .wheel-center-bg { fill:rgba(8,8,20,0.9); stroke:rgba(77,168,255,0.4); stroke-width:1.5; }
-  .wheel-center-text { fill:rgba(77,168,255,1); font-family:'Bebas Neue',monospace; font-size:20px; font-weight:800; text-anchor:middle; dominant-baseline:middle; letter-spacing:2px; }
-  .wheel-center-sub { fill:rgba(77,168,255,0.4); font-family:'Space Mono','Courier New',monospace; font-size:6px; letter-spacing:3px; text-anchor:middle; dominant-baseline:middle; }
-  .wheel-needle { stroke:rgba(77,168,255,0.5); stroke-width:1.5; stroke-linecap:round; }
-  .wheel-dot { fill:rgba(140,210,255,0.95); filter:drop-shadow(0 0 4px rgba(77,168,255,0.9)); }
+    .wheel-slice-bg { fill:rgba(77,168,255,0.04); stroke:rgba(77,168,255,0.18); stroke-width:0.8; transition:fill 0.1s,stroke 0.1s; }
+    .wheel-slice-bg.active-slice { fill:rgba(77,168,255,0.28); stroke:rgba(140,210,255,0.85); stroke-width:1.5; }
+    .wheel-label { fill:rgba(150,210,255,0.5); font-family:'Space Mono','Courier New',monospace; font-size:8.5px; font-weight:700; text-anchor:middle; dominant-baseline:middle; pointer-events:none; transition:fill 0.1s; }
+    .wheel-label.active-label { fill:#fff; font-size:10px; }
+    .wheel-tick { stroke:rgba(77,168,255,0.25); stroke-width:1; }
+    .wheel-tick.active-tick { stroke:rgba(140,210,255,0.9); stroke-width:2; }
+    .wheel-center-bg { fill:rgba(8,8,20,0.9); stroke:rgba(77,168,255,0.4); stroke-width:1.5; }
+    .wheel-center-text { fill:rgba(77,168,255,1); font-family:'Bebas Neue',monospace; font-size:20px; font-weight:800; text-anchor:middle; dominant-baseline:middle; letter-spacing:2px; }
+    .wheel-center-sub { fill:rgba(77,168,255,0.4); font-family:'Space Mono','Courier New',monospace; font-size:6px; letter-spacing:3px; text-anchor:middle; dominant-baseline:middle; }
+    .wheel-needle { stroke:rgba(77,168,255,0.5); stroke-width:1.5; stroke-linecap:round; }
+    .wheel-dot { fill:rgba(140,210,255,0.95); filter:drop-shadow(0 0 4px rgba(77,168,255,0.9)); }
 
-  /* Left-hand crosshair cursor */
-  #left-cursor { position:absolute; width:20px; height:20px; pointer-events:none; transform:translate(-50%,-50%); display:none; }
-  #left-cursor::before,#left-cursor::after { content:''; position:absolute; background:rgba(77,168,255,0.9); border-radius:1px; }
-  #left-cursor::before { width:1px; height:20px; left:50%; top:0; }
-  #left-cursor::after  { width:20px; height:1px; top:50%; left:0; }
+    /* Left-hand crosshair cursor */
+    #left-cursor { position:absolute; width:20px; height:20px; pointer-events:none; transform:translate(-50%,-50%); display:none; }
+    #left-cursor::before,#left-cursor::after { content:''; position:absolute; background:rgba(77,168,255,0.9); border-radius:1px; }
+    #left-cursor::before { width:1px; height:20px; left:50%; top:0; }
+    #left-cursor::after  { width:20px; height:1px; top:50%; left:0; }
 
-  #zone-chord-label { font-size:8px; letter-spacing:4px; text-transform:uppercase; color:rgba(77,168,255,0.4); margin-top:12px; }
+    #zone-chord-label { font-size:8px; letter-spacing:4px; text-transform:uppercase; color:rgba(77,168,255,0.4); margin-top:12px; }
 
-  /* RIGHT: Piano */
-  #zone-right { display:flex; flex-direction:column; align-items:center; justify-content:center; padding-bottom:120px; gap:12px; }
+    /* RIGHT: Piano */
+    #zone-right { display:flex; flex-direction:column; align-items:center; justify-content:center; padding-bottom:120px; gap:12px; }
 
-  #piano-active-note { font-family:var(--font-display); font-size:40px; letter-spacing:3px; color:rgba(200,255,87,0.9); min-height:1.1em; text-align:center; transition:opacity 0.15s,transform 0.12s; text-shadow:0 0 24px rgba(200,255,87,0.5); }
-  #piano-active-note.empty { opacity:0.12; transform:scale(0.88); }
-  .piano-card { background:rgba(8,8,20,0.55); border:1px solid rgba(200,255,87,0.12); border-radius:12px; padding:16px 14px 12px; backdrop-filter:blur(14px); box-shadow:0 0 30px rgba(200,255,87,0.06),inset 0 0 20px rgba(200,255,87,0.03); transition:box-shadow 0.3s,border-color 0.3s; }
-  #zone-piano-wrap.active .piano-card { box-shadow:0 0 55px rgba(200,255,87,0.22),inset 0 0 30px rgba(200,255,87,0.08); border-color:rgba(200,255,87,0.38); }
-  #piano-svg { width:clamp(360px,48vw,680px); height:clamp(150px,19vw,230px); display:block; overflow:visible; }
+    #piano-active-note { font-family:var(--font-display); font-size:40px; letter-spacing:3px; color:rgba(200,255,87,0.9); min-height:1.1em; text-align:center; transition:opacity 0.15s,transform 0.12s; text-shadow:0 0 24px rgba(200,255,87,0.5); }
+    #piano-active-note.empty { opacity:0.12; transform:scale(0.88); }
+    .piano-card { background:rgba(8,8,20,0.55); border:1px solid rgba(200,255,87,0.12); border-radius:12px; padding:16px 14px 12px; backdrop-filter:blur(14px); box-shadow:0 0 30px rgba(200,255,87,0.06),inset 0 0 20px rgba(200,255,87,0.03); transition:box-shadow 0.3s,border-color 0.3s; }
+    #zone-piano-wrap.active .piano-card { box-shadow:0 0 55px rgba(200,255,87,0.22),inset 0 0 30px rgba(200,255,87,0.08); border-color:rgba(200,255,87,0.38); }
+    #piano-svg { width:clamp(360px,48vw,680px); height:clamp(150px,19vw,230px); display:block; overflow:visible; }
 
-  .piano-white { fill:rgba(255,255,255,0.07); stroke:rgba(200,255,87,0.18); stroke-width:0.7; transition:fill 0.06s,transform 0.06s,filter 0.06s; transform-origin:center center; }
-  .piano-white.lit { fill:rgba(200,255,87,0.88); filter:drop-shadow(0 0 8px rgba(200,255,87,0.7)); }
-  .piano-white.pressed { transform:translateY(3px) scaleY(0.97); filter:brightness(0.92) drop-shadow(0 0 6px rgba(200,255,87,0.5)); }
-  .piano-black { fill:rgba(8,8,22,0.96); stroke:rgba(200,255,87,0.12); stroke-width:0.6; transition:fill 0.06s,transform 0.06s,filter 0.06s; transform-origin:center center; }
-  .piano-black.lit { fill:rgba(200,255,87,0.78); filter:drop-shadow(0 0 6px rgba(200,255,87,0.65)); }
-  .piano-black.pressed { transform:translateY(2px) scaleY(0.97); filter:brightness(0.88) drop-shadow(0 0 5px rgba(200,255,87,0.45)); }
-  .piano-note-name { fill:rgba(200,255,87,0.3); font-family:'Space Mono','Courier New',monospace; font-size:5.5px; text-anchor:middle; pointer-events:none; transition:fill 0.07s; }
-  .piano-note-name.lit { fill:rgba(8,8,16,0.9); font-weight:700; }
-  .piano-oct-sep { stroke:rgba(200,255,87,0.18); stroke-width:0.5; stroke-dasharray:2,2; }
+    .piano-white { fill:rgba(255,255,255,0.07); stroke:rgba(200,255,87,0.18); stroke-width:0.7; transition:fill 0.06s,transform 0.06s,filter 0.06s; transform-origin:center center; }
+    .piano-white.lit { fill:rgba(200,255,87,0.88); filter:drop-shadow(0 0 8px rgba(200,255,87,0.7)); }
+    .piano-white.pressed { transform:translateY(3px) scaleY(0.97); filter:brightness(0.92) drop-shadow(0 0 6px rgba(200,255,87,0.5)); }
+    .piano-black { fill:rgba(8,8,22,0.96); stroke:rgba(200,255,87,0.12); stroke-width:0.6; transition:fill 0.06s,transform 0.06s,filter 0.06s; transform-origin:center center; }
+    .piano-black.lit { fill:rgba(200,255,87,0.78); filter:drop-shadow(0 0 6px rgba(200,255,87,0.65)); }
+    .piano-black.pressed { transform:translateY(2px) scaleY(0.97); filter:brightness(0.88) drop-shadow(0 0 5px rgba(200,255,87,0.45)); }
+    .piano-note-name { fill:rgba(200,255,87,0.3); font-family:'Space Mono','Courier New',monospace; font-size:5.5px; text-anchor:middle; pointer-events:none; transition:fill 0.07s; }
+    .piano-note-name.lit { fill:rgba(8,8,16,0.9); font-weight:700; }
+    .piano-oct-sep { stroke:rgba(200,255,87,0.18); stroke-width:0.5; stroke-dasharray:2,2; }
 
-  /* Right-hand fingertip dot (fixed position) */
-  #right-cursor { position:fixed; width:14px; height:14px; border-radius:50%; background:rgba(200,255,87,0.9); box-shadow:0 0 12px rgba(200,255,87,0.7); pointer-events:none; transform:translate(-50%,-50%); display:none; z-index:20; }
+    /* Right-hand fingertip dot (fixed position) */
+    #right-cursor { position:fixed; width:14px; height:14px; border-radius:50%; background:rgba(200,255,87,0.9); box-shadow:0 0 12px rgba(200,255,87,0.7); pointer-events:none; transform:translate(-50%,-50%); display:none; z-index:20; }
 
-  #zone-piano-label { font-size:8px; letter-spacing:4px; text-transform:uppercase; color:rgba(200,255,87,0.4); }
+    #zone-piano-label { font-size:8px; letter-spacing:4px; text-transform:uppercase; color:rgba(200,255,87,0.4); }
 
-  /* ERRORS */
-  #cam-error { position:absolute; inset:0; z-index:50; display:none; flex-direction:column; align-items:center; justify-content:center; gap:16px; text-align:center; background:var(--bg); }
-  #cam-error .err-icon { font-size:44px; }
-  #cam-error h2 { font-family:var(--font-display); font-size:20px; letter-spacing:2px; color:var(--red); }
-  #cam-error p { font-size:10px; color:var(--text-muted); letter-spacing:1px; }
-  #cam-error button { font-family:var(--font); font-size:9px; letter-spacing:3px; text-transform:uppercase; padding:10px 28px; background:transparent; border:1px solid var(--red); color:var(--red); cursor:pointer; transition:all 0.2s; outline:none; }
-  #cam-error button:hover { background:var(--red); color:#fff; }
-</style>
+    /* ERRORS */
+    #cam-error { position:absolute; inset:0; z-index:50; display:none; flex-direction:column; align-items:center; justify-content:center; gap:16px; text-align:center; background:var(--bg); }
+    #cam-error .err-icon { font-size:44px; }
+    #cam-error h2 { font-family:var(--font-display); font-size:20px; letter-spacing:2px; color:var(--red); }
+    #cam-error p { font-size:10px; color:var(--text-muted); letter-spacing:1px; }
+    #cam-error button { font-family:var(--font); font-size:9px; letter-spacing:3px; text-transform:uppercase; padding:10px 28px; background:transparent; border:1px solid var(--red); color:var(--red); cursor:pointer; transition:all 0.2s; outline:none; }
+    #cam-error button:hover { background:var(--red); color:#fff; }
+  </style>
 </head>
 <body>
 
-<div id="screen-loading">
-  <div class="loading-logo">Nhạc <em>Trưởng</em></div>
-  <div class="loading-bar-wrap"><div class="loading-bar" id="load-bar"></div></div>
-  <div class="loading-text" id="load-text">Đang tải thư viện...</div>
-</div>
-
-<div id="screen-splash">
-  <div class="splash-logo">Nhạc <em>Trưởng</em></div>
-  <div class="splash-desc">
-    Tay trái → Chỉ ngón vào múi để chọn hợp âm.<br>
-    Tay phải → Chỉ ngón vào phím để chơi giai điệu.<br><br>
-    Bạn cần cấp quyền camera để bắt đầu.
-  </div>
-  <button class="splash-btn" id="btn-start">▶ &nbsp; Bắt đầu</button>
-</div>
-
-<div id="screen-rotate">
-  <div class="rotate-icon">📱</div>
-  <div class="rotate-text">Nhạc Trưởng hoạt động ở chế độ ngang.<br>Vui lòng xoay thiết bị.</div>
-</div>
-
-<div id="screen-app">
-  <div id="cam-wrap">
-    <video id="video" playsinline autoplay muted></video>
-    <canvas id="canvas-hand"></canvas>
-  </div>
-  <div id="zone-divider"></div>
-  <div id="cam-error">
-    <div class="err-icon">📷</div>
-    <h2>Không thể truy cập camera</h2>
-    <p>Vui lòng cấp quyền camera và thử lại.</p>
-    <button onclick="location.reload()">Thử lại</button>
+  <div id="screen-loading">
+    <div class="loading-logo">Nhạc <em>Trưởng</em></div>
+    <div class="loading-bar-wrap"><div class="loading-bar" id="load-bar"></div></div>
+    <div class="loading-text" id="load-text">Đang tải thư viện...</div>
   </div>
 
-  <!-- SPLIT ZONES -->
-  <div id="hand-zones">
-    <!-- LEFT: Chord Wheel -->
-    <div id="zone-left">
-      <div id="zone-chord-wheel">
-        <div class="wheel-card">
-          <svg id="chord-wheel-svg" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
-            <g id="wheel-slices"></g>
-            <circle cx="130" cy="130" r="124" fill="none" stroke="rgba(77,168,255,0.07)" stroke-width="1"/>
-            <circle cx="130" cy="130" r="106" fill="none" stroke="rgba(77,168,255,0.05)" stroke-width="0.5" stroke-dasharray="3,6"/>
-            <line x1="130" y1="130" x2="130" y2="58" class="wheel-needle" id="wheel-needle"/>
-            <circle cx="130" cy="130" r="42" class="wheel-center-bg"/>
-            <circle cx="130" cy="130" r="35" fill="none" stroke="rgba(77,168,255,0.15)" stroke-width="0.5"/>
-            <text x="130" y="124" class="wheel-center-text" id="wheel-chord-main">C</text>
-            <text x="130" y="141" class="wheel-center-sub" id="wheel-chord-type">MAJ</text>
-            <circle cx="130" cy="14" r="5" class="wheel-dot" id="wheel-dot"/>
-          </svg>
-          <div id="left-cursor"></div>
+  <div id="screen-splash">
+    <div class="splash-logo">Nhạc <em>Trưởng</em></div>
+    <div class="splash-desc">
+      Tay trái → Chỉ ngón vào múi để chọn hợp âm.<br>
+      Tay phải → Chỉ ngón vào phím để chơi giai điệu.<br><br>
+      Bạn cần cấp quyền camera để bắt đầu.
+    </div>
+    <button class="splash-btn" id="btn-start">▶ &nbsp; Bắt đầu</button>
+  </div>
+
+  <div id="screen-rotate">
+    <div class="rotate-icon">📱</div>
+    <div class="rotate-text">Nhạc Trưởng hoạt động ở chế độ ngang.<br>Vui lòng xoay thiết bị.</div>
+  </div>
+
+  <div id="screen-app">
+    <div id="cam-wrap">
+      <video id="video" playsinline autoplay muted></video>
+      <canvas id="canvas-hand"></canvas>
+    </div>
+    <div id="zone-divider"></div>
+    <div id="cam-error">
+      <div class="err-icon">📷</div>
+      <h2>Không thể truy cập camera</h2>
+      <p>Vui lòng cấp quyền camera và thử lại.</p>
+      <button onclick="location.reload()">Thử lại</button>
+    </div>
+
+    <!-- SPLIT ZONES -->
+    <div id="hand-zones">
+      <!-- LEFT: Chord Wheel -->
+      <div id="zone-left">
+        <div id="zone-chord-wheel">
+          <div class="wheel-card">
+            <svg id="chord-wheel-svg" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+              <g id="wheel-slices"></g>
+              <circle cx="130" cy="130" r="124" fill="none" stroke="rgba(77,168,255,0.07)" stroke-width="1"/>
+              <circle cx="130" cy="130" r="106" fill="none" stroke="rgba(77,168,255,0.05)" stroke-width="0.5" stroke-dasharray="3,6"/>
+              <line x1="130" y1="130" x2="130" y2="58" class="wheel-needle" id="wheel-needle"/>
+              <circle cx="130" cy="130" r="42" class="wheel-center-bg"/>
+              <circle cx="130" cy="130" r="35" fill="none" stroke="rgba(77,168,255,0.15)" stroke-width="0.5"/>
+              <text x="130" y="124" class="wheel-center-text" id="wheel-chord-main">C</text>
+              <text x="130" y="141" class="wheel-center-sub" id="wheel-chord-type">MAJ</text>
+              <circle cx="130" cy="14" r="5" class="wheel-dot" id="wheel-dot"/>
+            </svg>
+            <div id="left-cursor"></div>
+          </div>
+          <div id="zone-chord-label">TAY TRÁI · HỢP ÂM</div>
         </div>
-        <div id="zone-chord-label">TAY TRÁI · HỢP ÂM</div>
+      </div>
+
+      <!-- RIGHT: Piano -->
+      <div id="zone-right">
+        <div id="zone-piano-wrap">
+          <div id="piano-active-note" class="empty">—</div>
+          <div class="piano-card">
+            <svg id="piano-svg" viewBox="0 0 320 102" xmlns="http://www.w3.org/2000/svg">
+              <g id="piano-whites"></g>
+              <g id="piano-blacks"></g>
+            </svg>
+          </div>
+          <div id="zone-piano-label">TAY PHẢI · MELODY</div>
+        </div>
       </div>
     </div>
 
-    <!-- RIGHT: Piano -->
-    <div id="zone-right">
-      <div id="zone-piano-wrap">
-        <div id="piano-active-note" class="empty">—</div>
-        <div class="piano-card">
-          <svg id="piano-svg" viewBox="0 0 320 102" xmlns="http://www.w3.org/2000/svg">
-            <g id="piano-whites"></g>
-            <g id="piano-blacks"></g>
-          </svg>
+    <!-- Right hand cursor (fixed overlay) -->
+    <div id="right-cursor"></div>
+
+    <div id="note-big">
+      <div class="note-letter" id="note-letter">C</div>
+      <div class="note-hz" id="note-hz">261 Hz</div>
+    </div>
+
+    <div id="hud">
+      <div id="hud-top">
+        <div class="hud-logo">Nhạc<em>Trưởng</em></div>
+        <div id="hud-stats">
+          <div class="stat-block"><div class="stat-label">Melody</div><div class="stat-value inactive" id="stat-melody">--- Hz</div></div>
+          <div class="stat-block"><div class="stat-label">Volume</div><div class="stat-value inactive" id="stat-volume">---</div></div>
+          <div class="stat-block"><div class="stat-label">Melody zone</div><div class="stat-value inactive" id="stat-pinch">---</div></div>
+          <div class="stat-block"><div class="stat-label">Chord</div><div class="stat-value inactive" id="stat-chord">---</div></div>
         </div>
-        <div id="zone-piano-label">TAY PHẢI · MELODY</div>
       </div>
-    </div>
-  </div>
-
-  <!-- Right hand cursor (fixed overlay) -->
-  <div id="right-cursor"></div>
-
-  <div id="note-big">
-    <div class="note-letter" id="note-letter">C</div>
-    <div class="note-hz" id="note-hz">261 Hz</div>
-  </div>
-
-  <div id="hud">
-    <div id="hud-top">
-      <div class="hud-logo">Nhạc<em>Trưởng</em></div>
-      <div id="hud-stats">
-        <div class="stat-block"><div class="stat-label">Melody</div><div class="stat-value inactive" id="stat-melody">--- Hz</div></div>
-        <div class="stat-block"><div class="stat-label">Volume</div><div class="stat-value inactive" id="stat-volume">---</div></div>
-        <div class="stat-block"><div class="stat-label">Pinch</div><div class="stat-value inactive" id="stat-pinch">---</div></div>
-        <div class="stat-block"><div class="stat-label">Chord</div><div class="stat-value inactive" id="stat-chord">---</div></div>
+      <div id="hud-center">
+        <div class="zone-half-label" id="label-left">← Hợp Âm</div>
+        <div id="hand-prompt"><div class="prompt-ring">🎵</div><div class="prompt-text">Giơ tay vào camera</div></div>
+        <div class="zone-half-label" id="label-right">Giai Điệu →</div>
       </div>
-    </div>
-    <div id="hud-center">
-      <div class="zone-half-label" id="label-left">← Hợp Âm</div>
-      <div id="hand-prompt"><div class="prompt-ring">🎵</div><div class="prompt-text">Giơ tay vào camera</div></div>
-      <div class="zone-half-label" id="label-right">Giai Điệu →</div>
-    </div>
-    <div id="hud-bottom">
-      <div id="waveform-wrap"><canvas id="canvas-wave"></canvas></div>
-      <div id="controls">
-        <div class="ctrl-section" style="flex:1.3">
-          <div class="ctrl-title">Play</div>
-          <div id="mode-hint">Đã tắt Mode chuyển đổi. Hệ thống luôn chạy Melody + Hợp âm.</div>
-        </div>
-        <div class="ctrl-section">
-          <div class="ctrl-title">Scale</div>
-          <div class="btn-group">
-            <button class="tog-btn on" data-group="scale" data-val="major">Major</button>
-            <button class="tog-btn" data-group="scale" data-val="pentatonic">Pentatonic</button>
-            <button class="tog-btn" data-group="scale" data-val="minor">Minor</button>
-            <button class="tog-btn" data-group="scale" data-val="blues">Blues</button>
-            <button class="tog-btn" data-group="scale" data-val="chromatic">Chromatic</button>
+      <div id="hud-bottom">
+        <div id="waveform-wrap"><canvas id="canvas-wave"></canvas></div>
+        <div id="controls">
+          <div class="ctrl-section" style="flex:1.3">
+            <div class="ctrl-title">Play</div>
+            <div id="mode-hint">Âm lượng tách tay: ngón cái càng xa ngón trỏ → càng nhỏ (trái = hợp âm, phải = melody).</div>
+          </div>
+          <div class="ctrl-section">
+            <div class="ctrl-title">Scale</div>
+            <div class="btn-group">
+              <button class="tog-btn on" data-group="scale" data-val="major">Major</button>
+              <button class="tog-btn" data-group="scale" data-val="pentatonic">Pentatonic</button>
+              <button class="tog-btn" data-group="scale" data-val="minor">Minor</button>
+              <button class="tog-btn" data-group="scale" data-val="blues">Blues</button>
+              <button class="tog-btn" data-group="scale" data-val="chromatic">Chromatic</button>
+              <button class="tog-btn" data-group="scale" data-val="steven">Steven</button>
+            </div>
+          </div>
+          <div class="ctrl-section">
+            <div class="ctrl-title">Wave</div>
+            <div class="btn-group">
+              <button class="tog-btn on" data-group="wave" data-val="sine">Sine</button>
+              <button class="tog-btn" data-group="wave" data-val="triangle">Triangle</button>
+              <button class="tog-btn" data-group="wave" data-val="sawtooth">Saw</button>
+              <button class="tog-btn" data-group="wave" data-val="square">Square</button>
+            </div>
+          </div>
+          <div class="ctrl-section">
+            <div class="ctrl-title">Range</div>
+            <div class="btn-group">
+              <button class="tog-btn" data-group="range" data-val="2">2 oct</button>
+              <button class="tog-btn on" data-group="range" data-val="3">3 oct</button>
+              <button class="tog-btn" data-group="range" data-val="4">4 oct</button>
+            </div>
           </div>
         </div>
-        <div class="ctrl-section">
-          <div class="ctrl-title">Wave</div>
-          <div class="btn-group">
-            <button class="tog-btn on" data-group="wave" data-val="sine">Sine</button>
-            <button class="tog-btn" data-group="wave" data-val="triangle">Triangle</button>
-            <button class="tog-btn" data-group="wave" data-val="sawtooth">Saw</button>
-            <button class="tog-btn" data-group="wave" data-val="square">Square</button>
-          </div>
-        </div>
-        <div class="ctrl-section">
-          <div class="ctrl-title">Range</div>
-          <div class="btn-group">
-            <button class="tog-btn" data-group="range" data-val="2">2 oct</button>
-            <button class="tog-btn on" data-group="range" data-val="3">3 oct</button>
-            <button class="tog-btn" data-group="range" data-val="4">4 oct</button>
-          </div>
-        </div>
       </div>
+      <div id="hands-badge">Hands: <span id="hands-count">0</span></div>
     </div>
-    <div id="hands-badge">Hands: <span id="hands-count">0</span></div>
   </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-<script>
-/*
- * NHẠC TRƯỞNG — Direct Spatial Interaction
- * Left hand index tip  → points into chord wheel slices (angle-based)
- * Right hand index tip → hovers over piano keys (screen position hit-test)
- */
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script>
+  /*
+   * NHẠC TRƯỞNG — Direct Spatial Interaction
+   * Left hand index tip  → points into chord wheel slices (angle-based)
+   * Right hand index tip → hovers over piano keys (screen position hit-test)
+   */
 
-const S = { scale:'major', wave:'sine', range:3, handCount:0 };
+  const S = { scale:'major', wave:'sine', range:3, handCount:0 };
 
-const SCALES = {
-  major:      [0,2,4,5,7,9,11,12,14,16,17,19,21,23,24,26,28,29,31,33,35,36,38,40,41,43,45,47,48],
-  pentatonic: [0,2,4,7,9,12,14,16,19,21,24,26,28,31,33,36,38,40,43,45,48],
-  minor:      [0,2,3,5,7,8,10,12,14,15,17,19,20,22,24,26,27,29,31,32,34,36,38,39,41,43,44,46,48],
-  blues:      [0,3,5,6,7,10,12,15,17,18,19,22,24,27,29,30,31,34,36,39,41,42,43,46,48],
-  chromatic:  Array.from({length:49},(_,i)=>i),
-  simple:     [0,2,4,5,7,9,11,12,14,16,17,19,21,23,24],
-};
-const NOTE_NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const BASE_MIDI=48;
-function midiToFreq(m){return 440*Math.pow(2,(m-69)/12);}
-function midiName(m){return NOTE_NAMES[m%12];}
+  const SCALES = {
+    major:      [0,2,4,5,7,9,11,12,14,16,17,19,21,23,24,26,28,29,31,33,35,36,38,40,41,43,45,47,48],
+    pentatonic: [0,2,4,7,9,12,14,16,19,21,24,26,28,31,33,36,38,40,43,45,48],
+    minor:      [0,2,3,5,7,8,10,12,14,15,17,19,20,22,24,26,27,29,31,32,34,36,38,39,41,43,44,46,48],
+    blues:      [0,3,5,6,7,10,12,15,17,18,19,22,24,27,29,30,31,34,36,39,41,42,43,46,48],
+    chromatic:  Array.from({length:49},(_,i)=>i),
+    simple:     [0,2,4,5,7,9,11,12,14,16,17,19,21,23,24],
+    /* Steven: Dorian (0,2,3,5,7,9,10) across ~4 oct — khớp vibe F / Gm / Bbm trong wheel tùy chỉnh */
+    steven:     [0,2,3,5,7,9,10,12,14,15,17,19,21,22,24,26,27,29,31,33,34,36,38,39,41,43,45,46,48],
+  };
+  const NOTE_NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  const BASE_MIDI=48;
+  function midiToFreq(m){return 440*Math.pow(2,(m-69)/12);}
+  function midiName(m){return NOTE_NAMES[m%12];}
 
-// AUDIO
-let ctx=null,masterGain=null,analyser=null,wfBuf=null;
-const oscs={};
-function audioInit(){
-  ctx=new(window.AudioContext||window.webkitAudioContext)();
-  masterGain=ctx.createGain(); masterGain.gain.value=0.45;
-  analyser=ctx.createAnalyser(); analyser.fftSize=512;
-  wfBuf=new Uint8Array(analyser.frequencyBinCount);
-  masterGain.connect(analyser); analyser.connect(ctx.destination);
-}
-function noteOn(id,freq,vol=0.3){
-  if(!ctx)return; noteOff(id);
-  const osc=ctx.createOscillator(),gain=ctx.createGain();
-  osc.type=S.wave; osc.frequency.setValueAtTime(freq,ctx.currentTime);
-  gain.gain.setValueAtTime(0,ctx.currentTime);
-  gain.gain.linearRampToValueAtTime(vol,ctx.currentTime+0.025);
-  osc.connect(gain); gain.connect(masterGain); osc.start(); oscs[id]={osc,gain};
-}
-function noteOnPiano(id,freq,vol=0.3){
-  if(!ctx)return; noteOff(id);
-  const oscA=ctx.createOscillator();
-  const oscB=ctx.createOscillator();
-  const lp=ctx.createBiquadFilter();
-  const gain=ctx.createGain();
-  const now=ctx.currentTime;
-
-  oscA.type='triangle';
-  oscB.type='sine';
-  oscA.frequency.setValueAtTime(freq,now);
-  oscB.frequency.setValueAtTime(freq*2,now);
-  oscB.detune.setValueAtTime(3,now);
-
-  lp.type='lowpass';
-  lp.frequency.setValueAtTime(2200+vol*2800,now);
-  lp.Q.value=0.75;
-
-  gain.gain.setValueAtTime(0.0001,now);
-  gain.gain.linearRampToValueAtTime(Math.max(0.09,vol),now+0.012);
-  gain.gain.exponentialRampToValueAtTime(Math.max(0.05,vol*0.45),now+0.22);
-
-  oscA.connect(lp);
-  oscB.connect(lp);
-  lp.connect(gain);
-  gain.connect(masterGain);
-  oscA.start();
-  oscB.start();
-  oscs[id]={osc:oscA,oscB,gain,filter:lp};
-}
-function noteUpdate(id,freq,vol){
-  if(!oscs[id]){noteOn(id,freq,vol);return;}
-  const{osc,oscB,gain}=oscs[id]; osc.type=S.wave;
-  osc.frequency.setTargetAtTime(freq,ctx.currentTime,0.02);
-  if(oscB) oscB.frequency.setTargetAtTime(freq*2,ctx.currentTime,0.02);
-  if(vol!==undefined) gain.gain.setTargetAtTime(vol,ctx.currentTime,0.02);
-}
-function noteOff(id){
-  if(!oscs[id])return;
-  const{osc,oscB,gain}=oscs[id];
-  gain.gain.setValueAtTime(gain.gain.value,ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.15);
-  const _o=osc,_o2=oscB;
-  setTimeout(()=>{try{_o.stop();}catch(e){};try{_o2&&_o2.stop();}catch(e){}},220);
-  delete oscs[id];
-}
-function noteOffAll(){Object.keys(oscs).forEach(noteOff);}
-function playSnap(){
-  if(!ctx)return;
-  const buf=ctx.createBuffer(1,ctx.sampleRate*0.06,ctx.sampleRate);
-  const d=buf.getChannelData(0);
-  for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.exp(-i/(d.length*0.2));
-  const src=ctx.createBufferSource(),bpf=ctx.createBiquadFilter(),g=ctx.createGain();
-  bpf.type='bandpass';bpf.frequency.value=3000;bpf.Q.value=1.5;g.gain.value=0.6;
-  src.buffer=buf;src.connect(bpf);bpf.connect(g);g.connect(masterGain);src.start();
-}
-
-const TIPS=[4,8,12,16,20];
-function pinchDistance(lm){const dx=lm[4].x-lm[8].x,dy=lm[4].y-lm[8].y;return Math.sqrt(dx*dx+dy*dy);}
-function yToVol(y){return Math.max(0.05,Math.min(0.5,1-y));}
-function pinchToLoudness(pinch){
-  // 0.03 (close) -> loud, 0.23 (far) -> quiet
-  const near=0.03,far=0.23;
-  const t=Math.max(0,Math.min(1,(pinch-near)/(far-near)));
-  return 1-t;
-}
-function dualHandLoudness(leftLm,rightLm){
-  if(leftLm&&rightLm){
-    // Require both hands to be close for max volume
-    return Math.min(pinchToLoudness(pinchDistance(leftLm)),pinchToLoudness(pinchDistance(rightLm)));
+  // AUDIO
+  let ctx=null,masterGain=null,analyser=null,wfBuf=null;
+  const oscs={};
+  function audioInit(){
+    ctx=new(window.AudioContext||window.webkitAudioContext)();
+    masterGain=ctx.createGain(); masterGain.gain.value=0.45;
+    analyser=ctx.createAnalyser(); analyser.fftSize=512;
+    wfBuf=new Uint8Array(analyser.frequencyBinCount);
+    masterGain.connect(analyser); analyser.connect(ctx.destination);
   }
-  if(leftLm||rightLm){
-    return pinchToLoudness(pinchDistance(leftLm||rightLm))*0.85;
+  function noteOn(id,freq,vol=0.3){
+    if(!ctx)return; noteOff(id);
+    const osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.type=S.wave; osc.frequency.setValueAtTime(freq,ctx.currentTime);
+    gain.gain.setValueAtTime(0,ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(vol,ctx.currentTime+0.025);
+    osc.connect(gain); gain.connect(masterGain); osc.start(); oscs[id]={osc,gain};
   }
-  return 0;
-}
+  function noteOnPiano(id,freq,vol=0.3){
+    if(!ctx)return; noteOff(id);
+    const oscA=ctx.createOscillator();
+    const oscB=ctx.createOscillator();
+    const lp=ctx.createBiquadFilter();
+    const gain=ctx.createGain();
+    const now=ctx.currentTime;
 
-// MEDIAPIPE
-let mpHands=null,mpCamera=null,lastResults=null;
-function setupMediaPipe(){
-  const video=document.getElementById('video');
-  mpHands=new Hands({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`});
-  mpHands.setOptions({maxNumHands:2,modelComplexity:1,minDetectionConfidence:0.75,minTrackingConfidence:0.6});
-  mpHands.onResults(onResults);
-  mpCamera=new Camera(video,{onFrame:async()=>{await mpHands.send({image:video});},width:1280,height:720});
-  mpCamera.start();
-}
+    oscA.type='triangle';
+    oscB.type='sine';
+    oscA.frequency.setValueAtTime(freq,now);
+    oscB.frequency.setValueAtTime(freq*2,now);
+    oscB.detune.setValueAtTime(3,now);
 
-function onResults(res){
-  lastResults=res;
-  const hands=res.multiHandLandmarks||[];
-  S.handCount=hands.length;
-  document.getElementById('hands-count').textContent=hands.length;
-  const prompt=document.getElementById('hand-prompt');
-  const noteBig=document.getElementById('note-big');
+    lp.type='lowpass';
+    lp.frequency.setValueAtTime(2200+vol*2800,now);
+    lp.Q.value=0.75;
 
-  if(hands.length===0){
-    noteOffAll(); prompt.classList.remove('hidden'); noteBig.classList.remove('visible');
-    setStats({melody:'--- Hz',volume:'---',pinch:'---',chord:'---'});
-    clearZoneChord(); clearZoneMelody();
-    document.getElementById('left-cursor').style.display='none';
-    document.getElementById('right-cursor').style.display='none';
-    return;
+    gain.gain.setValueAtTime(0.0001,now);
+    gain.gain.linearRampToValueAtTime(Math.max(0.09,vol),now+0.012);
+    gain.gain.exponentialRampToValueAtTime(Math.max(0.05,vol*0.45),now+0.22);
+
+    oscA.connect(lp);
+    oscB.connect(lp);
+    lp.connect(gain);
+    gain.connect(masterGain);
+    oscA.start();
+    oscB.start();
+    oscs[id]={osc:oscA,oscB,gain,filter:lp};
   }
-  prompt.classList.add('hidden'); noteBig.classList.add('visible');
-
-  // Identify hands: MediaPipe 'Left'/'Right' labels are camera-perspective
-  // Because video is mirrored: camera 'Left' = person's right = appears on screen-right
-  const handedness=res.multiHandedness||[];
-  let leftLm=null,rightLm=null; // screen-left (chord), screen-right (melody)
-  hands.forEach((lm,i)=>{
-    const label=handedness[i]?.label||'Right';
-    // camera 'Right' label = screen LEFT half for mirrored view
-    if(label==='Right') leftLm=lm; else rightLm=lm;
-  });
-  // Single hand: use wrist x to guess zone
-  if(hands.length===1){
-    const wx=1-hands[0][0].x; // mirrored wrist x (0=left edge, 1=right edge)
-    if(wx<0.5) leftLm=hands[0]; else rightLm=hands[0];
+  function noteUpdate(id,freq,vol){
+    if(!oscs[id]){noteOn(id,freq,vol);return;}
+    const{osc,oscB,gain}=oscs[id]; osc.type=S.wave;
+    osc.frequency.setTargetAtTime(freq,ctx.currentTime,0.02);
+    if(oscB) oscB.frequency.setTargetAtTime(freq*2,ctx.currentTime,0.02);
+    if(vol!==undefined) gain.gain.setTargetAtTime(vol,ctx.currentTime,0.02);
+  }
+  function noteOff(id){
+    if(!oscs[id])return;
+    const{osc,oscB,gain}=oscs[id];
+    gain.gain.setValueAtTime(gain.gain.value,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.05);
+    const _o=osc,_o2=oscB;
+    setTimeout(()=>{try{_o.stop();}catch(e){};try{_o2&&_o2.stop();}catch(e){}},120);
+    delete oscs[id];
+  }
+  function noteOffAll(){Object.keys(oscs).forEach(noteOff);}
+  function playSnap(){
+    if(!ctx)return;
+    const buf=ctx.createBuffer(1,ctx.sampleRate*0.06,ctx.sampleRate);
+    const d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.exp(-i/(d.length*0.2));
+    const src=ctx.createBufferSource(),bpf=ctx.createBiquadFilter(),g=ctx.createGain();
+    bpf.type='bandpass';bpf.frequency.value=3000;bpf.Q.value=1.5;g.gain.value=0.6;
+    src.buffer=buf;src.connect(bpf);bpf.connect(g);g.connect(masterGain);src.start();
   }
 
-  processHands(rightLm,leftLm);
-}
-
-// ═══ CHORD WHEEL ═══
-// Chord sets per scale type
-const CHORD_SETS={
-  major:[
-    {root:'C',  semis:[0,4,7],    label:'C',   type:'maj'},
-    {root:'G',  semis:[7,11,14],  label:'G',   type:'maj'},
-    {root:'D',  semis:[2,6,9],    label:'D',   type:'maj'},
-    {root:'A',  semis:[9,13,16],  label:'A',   type:'maj'},
-    {root:'E',  semis:[4,8,11],   label:'E',   type:'maj'},
-    {root:'B',  semis:[11,15,18], label:'B',   type:'maj'},
-    {root:'F#', semis:[6,10,13],  label:'F#',  type:'maj'},
-    {root:'Db', semis:[1,5,8],    label:'Db',  type:'maj'},
-    {root:'Ab', semis:[8,12,15],  label:'Ab',  type:'maj'},
-    {root:'Eb', semis:[3,7,10],   label:'Eb',  type:'maj'},
-    {root:'Bb', semis:[10,14,17], label:'Bb',  type:'maj'},
-    {root:'F',  semis:[5,9,12],   label:'F',   type:'maj'},
-  ],
-  minor:[
-    {root:'Am', semis:[9,12,16],  label:'Am',  type:'min'},
-    {root:'Em', semis:[4,7,11],   label:'Em',  type:'min'},
-    {root:'Bm', semis:[11,14,18], label:'Bm',  type:'min'},
-    {root:'F#m',semis:[6,9,13],   label:'F#m', type:'min'},
-    {root:'C#m',semis:[1,4,8],    label:'C#m', type:'min'},
-    {root:'G#m',semis:[8,11,15],  label:'G#m', type:'min'},
-    {root:'Dm', semis:[2,5,9],    label:'Dm',  type:'min'},
-    {root:'Gm', semis:[7,10,14],  label:'Gm',  type:'min'},
-    {root:'Cm', semis:[0,3,7],    label:'Cm',  type:'min'},
-    {root:'Fm', semis:[5,8,12],   label:'Fm',  type:'min'},
-    {root:'Bbm',semis:[10,13,17], label:'Bbm', type:'min'},
-    {root:'Ebm',semis:[3,6,10],   label:'Ebm', type:'min'},
-  ],
-  pentatonic:[
-    {root:'C',  semis:[0,4,7],    label:'C',   type:'maj'},
-    {root:'G',  semis:[7,11,14],  label:'G',   type:'maj'},
-    {root:'D',  semis:[2,6,9],    label:'D',   type:'maj'},
-    {root:'A',  semis:[9,13,16],  label:'A',   type:'maj'},
-    {root:'E',  semis:[4,8,11],   label:'E',   type:'maj'},
-    {root:'B',  semis:[11,15,18], label:'B',   type:'maj'},
-    {root:'F#', semis:[6,10,13],  label:'F#',  type:'maj'},
-    {root:'Db', semis:[1,5,8],    label:'Db',  type:'maj'},
-  ],
-  blues:[
-    {root:'C7', semis:[0,4,7,10], label:'C7',  type:'dom7'},
-    {root:'G7', semis:[7,11,14,17],label:'G7', type:'dom7'},
-    {root:'D7', semis:[2,6,9,12], label:'D7',  type:'dom7'},
-    {root:'A7', semis:[9,13,16,19],label:'A7', type:'dom7'},
-    {root:'E7', semis:[4,8,11,14],label:'E7',  type:'dom7'},
-    {root:'Bb7',semis:[10,14,17,20],label:'Bb7',type:'dom7'},
-    {root:'F7', semis:[5,9,12,15],label:'F7',  type:'dom7'},
-    {root:'Eb7',semis:[3,7,10,13],label:'Eb7', type:'dom7'},
-  ],
-  chromatic:[
-    {root:'C',  semis:[0,4,7],    label:'C',   type:'maj'},
-    {root:'Cm', semis:[0,3,7],    label:'Cm',  type:'min'},
-    {root:'C7', semis:[0,4,7,10], label:'C7',  type:'dom7'},
-    {root:'Cdim',semis:[0,3,6],   label:'Cdim',type:'dim'},
-    {root:'G',  semis:[7,11,14],  label:'G',   type:'maj'},
-    {root:'Gm', semis:[7,10,14],  label:'Gm',  type:'min'},
-    {root:'Am', semis:[9,12,16],  label:'Am',  type:'min'},
-    {root:'F',  semis:[5,9,12],   label:'F',   type:'maj'},
-    {root:'Fm', semis:[5,8,12],   label:'Fm',  type:'min'},
-    {root:'E',  semis:[4,8,11],   label:'E',   type:'maj'},
-    {root:'Em', semis:[4,7,11],   label:'Em',  type:'min'},
-    {root:'Dm', semis:[2,5,9],    label:'Dm',  type:'min'},
-  ],
-  simple:[
-    {root:'C',  semis:[0,4,7],    label:'C',   type:'maj'},
-    {root:'G',  semis:[7,11,14],  label:'G',   type:'maj'},
-    {root:'F',  semis:[5,9,12],   label:'F',   type:'maj'},
-    {root:'D',  semis:[2,6,9],    label:'D',   type:'maj'},
-    {root:'A',  semis:[9,13,16],  label:'A',   type:'maj'},
-    {root:'E',  semis:[4,8,11],   label:'E',   type:'maj'},
-  ],
-};
-let WHEEL_CHORDS=CHORD_SETS['major'];
-let currentWheelIdx=0;
-
-// Mute state
-let chordMuted=false; // tay trái dí vào tâm wheel
-let centerHoldFrames=0;
-const CENTER_HOLD_TO_MUTE=4;
-
-function buildChordWheel(){
-  // Update wheel chords based on current scale
-  WHEEL_CHORDS=CHORD_SETS[S.scale]||CHORD_SETS['major'];
-  if(currentWheelIdx>=WHEEL_CHORDS.length) currentWheelIdx=0;
-
-  const g=document.getElementById('wheel-slices');
-  g.innerHTML='';
-  const N=WHEEL_CHORDS.length,cx=130,cy=130,r1=46,r2=120;
-  const sliceAngle=(Math.PI*2)/N;
-  WHEEL_CHORDS.forEach((ch,i)=>{
-    const startA=-Math.PI/2+i*sliceAngle,endA=startA+sliceAngle,gap=0.025;
-    const x1=cx+r1*Math.cos(startA+gap),y1=cy+r1*Math.sin(startA+gap);
-    const x2=cx+r2*Math.cos(startA+gap),y2=cy+r2*Math.sin(startA+gap);
-    const x3=cx+r2*Math.cos(endA-gap),  y3=cy+r2*Math.sin(endA-gap);
-    const x4=cx+r1*Math.cos(endA-gap),  y4=cy+r1*Math.sin(endA-gap);
-    const d=`M${x1},${y1} L${x2},${y2} A${r2},${r2} 0 0,1 ${x3},${y3} L${x4},${y4} A${r1},${r1} 0 0,0 ${x1},${y1}Z`;
-    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-    path.setAttribute('d',d); path.setAttribute('class','wheel-slice-bg'); path.dataset.idx=i;
-    g.appendChild(path);
-    const midA=startA+sliceAngle/2;
-    const tick=document.createElementNS('http://www.w3.org/2000/svg','line');
-    tick.setAttribute('x1',cx+120*Math.cos(midA)); tick.setAttribute('y1',cy+120*Math.sin(midA));
-    tick.setAttribute('x2',cx+128*Math.cos(midA)); tick.setAttribute('y2',cy+128*Math.sin(midA));
-    tick.setAttribute('class','wheel-tick'); tick.dataset.tickIdx=i; g.appendChild(tick);
-    const lr=(r1+r2)/2+2;
-    const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
-    txt.setAttribute('x',cx+lr*Math.cos(midA)); txt.setAttribute('y',cy+lr*Math.sin(midA));
-    txt.setAttribute('class','wheel-label'); txt.dataset.idx=i; txt.textContent=ch.label;
-    g.appendChild(txt);
-  });
-  highlightWheelSlice(0);
-  updateCenterMuteVisual();
-}
-
-function highlightWheelSlice(idx){
-  currentWheelIdx=idx;
-  document.querySelectorAll('.wheel-slice-bg').forEach((p,i)=>p.classList.toggle('active-slice',i===idx));
-  document.querySelectorAll('.wheel-label').forEach((t,i)=>t.classList.toggle('active-label',i===idx));
-  document.querySelectorAll('.wheel-tick').forEach((t,i)=>t.classList.toggle('active-tick',i===idx));
-  const ch=WHEEL_CHORDS[idx];
-  if(!ch)return;
-  document.getElementById('wheel-chord-main').textContent=ch.label;
-  document.getElementById('wheel-chord-type').textContent=ch.type.toUpperCase();
-  const N=WHEEL_CHORDS.length,angle=-Math.PI/2+(idx+0.5)*(Math.PI*2/N);
-  const cx=130,cy=130;
-  document.getElementById('wheel-dot').setAttribute('cx',cx+124*Math.cos(angle));
-  document.getElementById('wheel-dot').setAttribute('cy',cy+124*Math.sin(angle));
-  document.getElementById('wheel-needle').setAttribute('x2',cx+55*Math.cos(angle));
-  document.getElementById('wheel-needle').setAttribute('y2',cy+55*Math.sin(angle));
-}
-
-function updateCenterMuteVisual(){
-  const bg=document.querySelector('.wheel-center-bg');
-  const mainTxt=document.getElementById('wheel-chord-main');
-  const subTxt=document.getElementById('wheel-chord-type');
-  if(chordMuted){
-    bg.style.fill='rgba(255,60,60,0.25)';
-    bg.style.stroke='rgba(255,80,80,0.8)';
-    mainTxt.style.fill='rgba(255,100,100,0.9)';
-    subTxt.textContent='MUTE';
-    subTxt.style.fill='rgba(255,80,80,0.7)';
-  }else{
-    bg.style.fill='';
-    bg.style.stroke='';
-    mainTxt.style.fill='';
-    const ch=WHEEL_CHORDS[currentWheelIdx];
-    if(ch){subTxt.textContent=ch.type.toUpperCase();subTxt.style.fill='';}
+  const TIPS=[4,8,12,16,20];
+  function pinchDistance(lm){const dx=lm[4].x-lm[8].x,dy=lm[4].y-lm[8].y;return Math.sqrt(dx*dx+dy*dy);}
+  function pinchToLoudness(pinch){
+    // 0.03 (close) -> loud, 0.23 (far) -> quiet
+    const near=0.03,far=0.23;
+    const t=Math.max(0,Math.min(1,(pinch-near)/(far-near)));
+    return 1-t;
   }
-}
+  /** Tay độc lập: khoảng cách ngón cái–trỏ càng lớn → gain càng nhỏ (0.04…max). */
+  function thumbSpreadGain(lm,maxOut){
+    const p=pinchToLoudness(pinchDistance(lm));
+    return Math.max(0.04,maxOut*p);
+  }
 
-/**
- * Given SVG coords, return which slice idx the point is in (by angle from center).
- * Returns -1 if inside center circle (mute zone).
- */
-function sliceFromSvgPoint(sx,sy){
-  const cx=130,cy=130,r1=46;
-  const dx=sx-cx,dy=sy-cy;
-  if(Math.sqrt(dx*dx+dy*dy)<r1) return -1; // center → mute
-  let angle=(Math.atan2(dy,dx)+Math.PI/2+Math.PI*2)%(Math.PI*2);
-  return Math.floor(angle/((Math.PI*2)/WHEEL_CHORDS.length))%WHEEL_CHORDS.length;
-}
+  // MEDIAPIPE
+  let mpHands=null,mpCamera=null,lastResults=null;
+  function setupMediaPipe(){
+    const video=document.getElementById('video');
+    mpHands=new Hands({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`});
+    mpHands.setOptions({maxNumHands:2,modelComplexity:1,minDetectionConfidence:0.75,minTrackingConfidence:0.6});
+    mpHands.onResults(onResults);
+    mpCamera=new Camera(video,{onFrame:async()=>{await mpHands.send({image:video});},width:1280,height:720});
+    mpCamera.start();
+  }
 
-// ═══ PIANO ═══
-const PIANO_START_MIDI=48;
-const PIANO_WHITE_PATTERN=[0,2,4,5,7,9,11];
-const PIANO_BLACK_PATTERN=[1,3,null,6,8,10,null];
-let pianoWhiteEls=[],pianoBlackEls=[],pianoNameEls=[],litMidi=-1;
-const pianoKeyRects=[]; // {midi, x, y, w, h, isBlack}
-const pianoLayout={width:320,height:102};
-let currentMelodyMidi=-1;
+  function onResults(res){
+    lastResults=res;
+    const hands=res.multiHandLandmarks||[];
+    S.handCount=hands.length;
+    document.getElementById('hands-count').textContent=hands.length;
+    const prompt=document.getElementById('hand-prompt');
+    const noteBig=document.getElementById('note-big');
 
-function getPianoVisualPreset(numOct){
-  if(numOct===2) return {min:420, vw:54, max:760, hMin:170, hVw:22, hMax:280};
-  if(numOct===4) return {min:500, vw:64, max:980, hMin:170, hVw:22, hMax:280};
-  return {min:460, vw:58, max:860, hMin:170, hVw:22, hMax:280};
-}
+    if(hands.length===0){
+      noteOffAll(); prompt.classList.remove('hidden'); noteBig.classList.remove('visible');
+      setStats({melody:'--- Hz',volume:'---',pinch:'---',chord:'---'});
+      clearZoneChord(); clearZoneMelody();
+      document.getElementById('left-cursor').style.display='none';
+      document.getElementById('right-cursor').style.display='none';
+      return;
+    }
+    prompt.classList.add('hidden'); noteBig.classList.add('visible');
 
-function buildPiano(){
-  const svg=document.getElementById('piano-svg');
-  const gW=document.getElementById('piano-whites'),gB=document.getElementById('piano-blacks');
-  gW.innerHTML=''; gB.innerHTML='';
-  pianoWhiteEls=[]; pianoBlackEls=[]; pianoNameEls=[]; pianoKeyRects.length=0;
-
-  const numOct=S.range||3;
-  const preset=getPianoVisualPreset(numOct);
-  svg.style.width=`clamp(${preset.min}px,${preset.vw}vw,${preset.max}px)`;
-  svg.style.height=`clamp(${preset.hMin}px,${preset.hVw}vw,${preset.hMax}px)`;
-
-  // Dynamically fit white key width based on selected OCT range
-  const VIEW_W=560,VIEW_H=188,SIDE_PAD=16;
-  const totalWhites=7*numOct;
-  const WHITE_W=Math.max(14,Math.floor((VIEW_W-SIDE_PAD*2)/totalWhites));
-  const WHITE_H=168;
-  const BLACK_W=Math.max(10,Math.round(WHITE_W*0.62));
-  const BLACK_H=104;
-  const totalW=totalWhites*WHITE_W;
-  const startX=(VIEW_W-totalW)/2,y0=9;
-  svg.setAttribute('viewBox',`0 0 ${VIEW_W} ${VIEW_H}`);
-  pianoLayout.width=VIEW_W;
-  pianoLayout.height=VIEW_H;
-
-  let wIdx=0;
-  for(let oct=0;oct<numOct;oct++){
-    PIANO_WHITE_PATTERN.forEach(semi=>{
-      const midi=PIANO_START_MIDI+oct*12+semi,x=startX+wIdx*WHITE_W;
-      const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
-      rect.setAttribute('x',x+1);rect.setAttribute('y',y0);
-      rect.setAttribute('width',WHITE_W-2);rect.setAttribute('height',WHITE_H);
-      rect.setAttribute('rx',2);rect.setAttribute('class','piano-white');
-      rect.dataset.midi=midi; gW.appendChild(rect);
-      pianoWhiteEls.push({el:rect,midi});
-      pianoKeyRects.push({midi,x:x+1,y:y0,w:WHITE_W-2,h:WHITE_H,isBlack:false});
-      if(NOTE_NAMES[midi%12]==='C'){
-        const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
-        txt.setAttribute('x',x+WHITE_W/2);txt.setAttribute('y',y0+WHITE_H-7);
-        txt.setAttribute('class','piano-note-name');txt.dataset.midi=midi;
-        txt.textContent=NOTE_NAMES[midi%12]+(Math.floor(midi/12)-1);
-        gW.appendChild(txt);pianoNameEls.push({el:txt,midi});
-        if(oct>0){const sep=document.createElementNS('http://www.w3.org/2000/svg','line');
-          sep.setAttribute('x1',x+0.5);sep.setAttribute('y1',y0);
-          sep.setAttribute('x2',x+0.5);sep.setAttribute('y2',y0+WHITE_H);
-          sep.setAttribute('class','piano-oct-sep');gW.appendChild(sep);}
-      }
-      wIdx++;
+    // Identify hands: MediaPipe 'Left'/'Right' labels are camera-perspective
+    // Because video is mirrored: camera 'Left' = person's right = appears on screen-right
+    const handedness=res.multiHandedness||[];
+    let leftLm=null,rightLm=null; // screen-left (chord), screen-right (melody)
+    hands.forEach((lm,i)=>{
+      const label=handedness[i]?.label||'Right';
+      // camera 'Right' label = screen LEFT half for mirrored view
+      if(label==='Right') leftLm=lm; else rightLm=lm;
     });
+    // Single hand: use wrist x to guess zone
+    if(hands.length===1){
+      const wx=1-hands[0][0].x; // mirrored wrist x (0=left edge, 1=right edge)
+      if(wx<0.5) leftLm=hands[0]; else rightLm=hands[0];
+    }
+
+    processHands(rightLm,leftLm);
   }
-  wIdx=0;
-  for(let oct=0;oct<numOct;oct++){
-    PIANO_BLACK_PATTERN.forEach((semi,pi)=>{
-      if(semi===null){wIdx++;return;}
-      const midi=PIANO_START_MIDI+oct*12+semi,x=startX+wIdx*WHITE_W+WHITE_W-BLACK_W/2;
-      const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
-      rect.setAttribute('x',x);rect.setAttribute('y',y0);
-      rect.setAttribute('width',BLACK_W);rect.setAttribute('height',BLACK_H);
-      rect.setAttribute('rx',2);rect.setAttribute('class','piano-black');
-      rect.dataset.midi=midi; gB.appendChild(rect);
-      pianoBlackEls.push({el:rect,midi});
-      pianoKeyRects.push({midi,x,y:y0,w:BLACK_W,h:BLACK_H,isBlack:true});
-      wIdx++;
+
+  // ═══ CHORD WHEEL ═══
+  // Chord sets per scale type
+  const CHORD_SETS={
+    major:[
+      {root:'C',  semis:[0,4,7],    label:'C',   type:'maj'},
+      {root:'G',  semis:[7,11,14],  label:'G',   type:'maj'},
+      {root:'D',  semis:[2,6,9],    label:'D',   type:'maj'},
+      {root:'A',  semis:[9,13,16],  label:'A',   type:'maj'},
+      {root:'E',  semis:[4,8,11],   label:'E',   type:'maj'},
+      {root:'B',  semis:[11,15,18], label:'B',   type:'maj'},
+      {root:'F#', semis:[6,10,13],  label:'F#',  type:'maj'},
+      {root:'Db', semis:[1,5,8],    label:'Db',  type:'maj'},
+      {root:'Ab', semis:[8,12,15],  label:'Ab',  type:'maj'},
+      {root:'Eb', semis:[3,7,10],   label:'Eb',  type:'maj'},
+      {root:'Bb', semis:[10,14,17], label:'Bb',  type:'maj'},
+      {root:'F',  semis:[5,9,12],   label:'F',   type:'maj'},
+    ],
+    minor:[
+      {root:'Am', semis:[9,12,16],  label:'Am',  type:'min'},
+      {root:'Em', semis:[4,7,11],   label:'Em',  type:'min'},
+      {root:'Bm', semis:[11,14,18], label:'Bm',  type:'min'},
+      {root:'F#m',semis:[6,9,13],   label:'F#m', type:'min'},
+      {root:'C#m',semis:[1,4,8],    label:'C#m', type:'min'},
+      {root:'G#m',semis:[8,11,15],  label:'G#m', type:'min'},
+      {root:'Dm', semis:[2,5,9],    label:'Dm',  type:'min'},
+      {root:'Gm', semis:[7,10,14],  label:'Gm',  type:'min'},
+      {root:'Cm', semis:[0,3,7],    label:'Cm',  type:'min'},
+      {root:'Fm', semis:[5,8,12],   label:'Fm',  type:'min'},
+      {root:'Bbm',semis:[10,13,17], label:'Bbm', type:'min'},
+      {root:'Ebm',semis:[3,6,10],   label:'Ebm', type:'min'},
+    ],
+    pentatonic:[
+      {root:'C',  semis:[0,4,7],    label:'C',   type:'maj'},
+      {root:'G',  semis:[7,11,14],  label:'G',   type:'maj'},
+      {root:'D',  semis:[2,6,9],    label:'D',   type:'maj'},
+      {root:'A',  semis:[9,13,16],  label:'A',   type:'maj'},
+      {root:'E',  semis:[4,8,11],   label:'E',   type:'maj'},
+      {root:'B',  semis:[11,15,18], label:'B',   type:'maj'},
+      {root:'F#', semis:[6,10,13],  label:'F#',  type:'maj'},
+      {root:'Db', semis:[1,5,8],    label:'Db',  type:'maj'},
+    ],
+    blues:[
+      {root:'C7', semis:[0,4,7,10], label:'C7',  type:'dom7'},
+      {root:'G7', semis:[7,11,14,17],label:'G7', type:'dom7'},
+      {root:'D7', semis:[2,6,9,12], label:'D7',  type:'dom7'},
+      {root:'A7', semis:[9,13,16,19],label:'A7', type:'dom7'},
+      {root:'E7', semis:[4,8,11,14],label:'E7',  type:'dom7'},
+      {root:'Bb7',semis:[10,14,17,20],label:'Bb7',type:'dom7'},
+      {root:'F7', semis:[5,9,12,15],label:'F7',  type:'dom7'},
+      {root:'Eb7',semis:[3,7,10,13],label:'Eb7', type:'dom7'},
+    ],
+    chromatic:[
+      {root:'C',  semis:[0,4,7],    label:'C',   type:'maj'},
+      {root:'Cm', semis:[0,3,7],    label:'Cm',  type:'min'},
+      {root:'C7', semis:[0,4,7,10], label:'C7',  type:'dom7'},
+      {root:'Cdim',semis:[0,3,6],   label:'Cdim',type:'dim'},
+      {root:'G',  semis:[7,11,14],  label:'G',   type:'maj'},
+      {root:'Gm', semis:[7,10,14],  label:'Gm',  type:'min'},
+      {root:'Am', semis:[9,12,16],  label:'Am',  type:'min'},
+      {root:'F',  semis:[5,9,12],   label:'F',   type:'maj'},
+      {root:'Fm', semis:[5,8,12],   label:'Fm',  type:'min'},
+      {root:'E',  semis:[4,8,11],   label:'E',   type:'maj'},
+      {root:'Em', semis:[4,7,11],   label:'Em',  type:'min'},
+      {root:'Dm', semis:[2,5,9],    label:'Dm',  type:'min'},
+    ],
+    simple:[
+      {root:'C',  semis:[0,4,7],    label:'C',   type:'maj'},
+      {root:'G',  semis:[7,11,14],  label:'G',   type:'maj'},
+      {root:'F',  semis:[5,9,12],   label:'F',   type:'maj'},
+      {root:'D',  semis:[2,6,9],    label:'D',   type:'maj'},
+      {root:'A',  semis:[9,13,16],  label:'A',   type:'maj'},
+      {root:'E',  semis:[4,8,11],   label:'E',   type:'maj'},
+    ],
+    steven:[
+      {root:'F',   semis:[5,9,12],       label:'F',   type:'maj'},
+      {root:'A7',  semis:[9,13,16,19],  label:'A7',  type:'dom7'},
+      {root:'Bb',  semis:[10,14,17],    label:'Bb',  type:'maj'},
+      {root:'Bbm', semis:[10,13,17],    label:'Bbm', type:'min'},
+    ],
+  };
+  let WHEEL_CHORDS=CHORD_SETS['major'];
+  let currentWheelIdx=0;
+
+  // Mute state
+  let chordMuted=false; // tay trái dí vào tâm wheel
+  let centerHoldFrames=0;
+  const CENTER_HOLD_TO_MUTE=4;
+
+  function buildChordWheel(){
+    // Update wheel chords based on current scale
+    WHEEL_CHORDS=CHORD_SETS[S.scale]||CHORD_SETS['major'];
+    if(currentWheelIdx>=WHEEL_CHORDS.length) currentWheelIdx=0;
+
+    const g=document.getElementById('wheel-slices');
+    g.innerHTML='';
+    const N=WHEEL_CHORDS.length,cx=130,cy=130,r1=46,r2=120;
+    const sliceAngle=(Math.PI*2)/N;
+    WHEEL_CHORDS.forEach((ch,i)=>{
+      const startA=-Math.PI/2+i*sliceAngle,endA=startA+sliceAngle,gap=0.025;
+      const x1=cx+r1*Math.cos(startA+gap),y1=cy+r1*Math.sin(startA+gap);
+      const x2=cx+r2*Math.cos(startA+gap),y2=cy+r2*Math.sin(startA+gap);
+      const x3=cx+r2*Math.cos(endA-gap),  y3=cy+r2*Math.sin(endA-gap);
+      const x4=cx+r1*Math.cos(endA-gap),  y4=cy+r1*Math.sin(endA-gap);
+      const d=`M${x1},${y1} L${x2},${y2} A${r2},${r2} 0 0,1 ${x3},${y3} L${x4},${y4} A${r1},${r1} 0 0,0 ${x1},${y1}Z`;
+      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d',d); path.setAttribute('class','wheel-slice-bg'); path.dataset.idx=i;
+      g.appendChild(path);
+      const midA=startA+sliceAngle/2;
+      const tick=document.createElementNS('http://www.w3.org/2000/svg','line');
+      tick.setAttribute('x1',cx+120*Math.cos(midA)); tick.setAttribute('y1',cy+120*Math.sin(midA));
+      tick.setAttribute('x2',cx+128*Math.cos(midA)); tick.setAttribute('y2',cy+128*Math.sin(midA));
+      tick.setAttribute('class','wheel-tick'); tick.dataset.tickIdx=i; g.appendChild(tick);
+      const lr=(r1+r2)/2+2;
+      const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+      txt.setAttribute('x',cx+lr*Math.cos(midA)); txt.setAttribute('y',cy+lr*Math.sin(midA));
+      txt.setAttribute('class','wheel-label'); txt.dataset.idx=i; txt.textContent=ch.label;
+      g.appendChild(txt);
     });
+    highlightWheelSlice(0);
+    updateCenterMuteVisual();
   }
-}
 
-function pianoKeyFromScreen(screenX,screenY){
-  const svgEl=document.getElementById('piano-svg');
-  const rect=svgEl.getBoundingClientRect();
-  const sx=(screenX-rect.left)/rect.width*pianoLayout.width;
-  const sy=(screenY-rect.top)/rect.height*pianoLayout.height;
-  // Black keys first (higher z)
-  for(const k of pianoKeyRects.filter(k=>k.isBlack))
-    if(sx>=k.x&&sx<=k.x+k.w&&sy>=k.y&&sy<=k.y+k.h) return k.midi;
-  for(const k of pianoKeyRects.filter(k=>!k.isBlack))
-    if(sx>=k.x&&sx<=k.x+k.w&&sy>=k.y&&sy<=k.y+k.h) return k.midi;
-  // Fallback: nearest white key by x
-  const whites=pianoKeyRects.filter(k=>!k.isBlack);
-  if(!whites.length) return -1;
-  return whites.reduce((b,k)=>Math.abs(sx-(k.x+k.w/2))<Math.abs(sx-(b.x+b.w/2))?k:b).midi;
-}
-
-function litPianoKeys(midiList){
-  const midiSet=new Set((midiList||[]).filter(m=>m>=0));
-  const [onlyMidi]=midiSet;
-  if(midiSet.size===1&&onlyMidi===litMidi)return;
-  litMidi=midiSet.size===1?onlyMidi:-1;
-  pianoWhiteEls.forEach(({el,midi:m})=>{
-    const on=midiSet.has(m);
-    el.classList.toggle('lit',on);
-    el.classList.toggle('pressed',on);
-  });
-  pianoBlackEls.forEach(({el,midi:m})=>{
-    const on=midiSet.has(m);
-    el.classList.toggle('lit',on);
-    el.classList.toggle('pressed',on);
-  });
-  pianoNameEls.forEach(({el,midi:m})=>el.classList.toggle('lit',midiSet.has(m)));
-  const noteEl=document.getElementById('piano-active-note');
-  if(midiSet.size===1){
-    const [midi]=midiSet;
-    noteEl.textContent=NOTE_NAMES[midi%12]+(Math.floor(midi/12)-1);
-    noteEl.classList.remove('empty');
-  }else{
-    noteEl.textContent='—';
-    noteEl.classList.add('empty');
+  function highlightWheelSlice(idx){
+    currentWheelIdx=idx;
+    document.querySelectorAll('.wheel-slice-bg').forEach((p,i)=>p.classList.toggle('active-slice',i===idx));
+    document.querySelectorAll('.wheel-label').forEach((t,i)=>t.classList.toggle('active-label',i===idx));
+    document.querySelectorAll('.wheel-tick').forEach((t,i)=>t.classList.toggle('active-tick',i===idx));
+    const ch=WHEEL_CHORDS[idx];
+    if(!ch)return;
+    document.getElementById('wheel-chord-main').textContent=ch.label;
+    document.getElementById('wheel-chord-type').textContent=ch.type.toUpperCase();
+    const N=WHEEL_CHORDS.length,angle=-Math.PI/2+(idx+0.5)*(Math.PI*2/N);
+    const cx=130,cy=130;
+    document.getElementById('wheel-dot').setAttribute('cx',cx+124*Math.cos(angle));
+    document.getElementById('wheel-dot').setAttribute('cy',cy+124*Math.sin(angle));
+    document.getElementById('wheel-needle').setAttribute('x2',cx+55*Math.cos(angle));
+    document.getElementById('wheel-needle').setAttribute('y2',cy+55*Math.sin(angle));
   }
-}
-function clearPianoLit(){litPianoKeys([]);}
-function playMelodyPiano(midi,vol){
-  const v=Math.max(0.08,Math.min(0.45,vol*0.9));
-  if(currentMelodyMidi!==midi){
-    noteOff('melody');
-    noteOn('melody',midiToFreq(midi),v);
-    currentMelodyMidi=midi;
-  }else{
-    noteUpdate('melody',midiToFreq(midi),Math.max(0.06,v*0.78));
+
+  function updateCenterMuteVisual(){
+    const bg=document.querySelector('.wheel-center-bg');
+    const mainTxt=document.getElementById('wheel-chord-main');
+    const subTxt=document.getElementById('wheel-chord-type');
+    if(chordMuted){
+      bg.style.fill='rgba(255,60,60,0.25)';
+      bg.style.stroke='rgba(255,80,80,0.8)';
+      mainTxt.style.fill='rgba(255,100,100,0.9)';
+      subTxt.textContent='MUTE';
+      subTxt.style.fill='rgba(255,80,80,0.7)';
+    }else{
+      bg.style.fill='';
+      bg.style.stroke='';
+      mainTxt.style.fill='';
+      const ch=WHEEL_CHORDS[currentWheelIdx];
+      if(ch){subTxt.textContent=ch.type.toUpperCase();subTxt.style.fill='';}
+    }
   }
-}
 
-function clearZoneChord(){document.getElementById('zone-chord-wheel').classList.remove('active');}
-function clearZoneMelody(){clearPianoLit();document.getElementById('zone-piano-wrap').classList.remove('active');}
+  /**
+   * Given SVG coords, return which slice idx the point is in (by angle from center).
+   * Returns -1 if inside center circle (mute zone).
+   */
+  function sliceFromSvgPoint(sx,sy){
+    const cx=130,cy=130,r1=46;
+    const dx=sx-cx,dy=sy-cy;
+    if(Math.sqrt(dx*dx+dy*dy)<r1) return -1; // center → mute
+    let angle=(Math.atan2(dy,dx)+Math.PI/2+Math.PI*2)%(Math.PI*2);
+    return Math.floor(angle/((Math.PI*2)/WHEEL_CHORDS.length))%WHEEL_CHORDS.length;
+  }
 
-// ═══ MAIN PROCESSING ═══
-// Detect fist: all finger tips closer to wrist than knuckles
-function isFist(lm){
-  // Check if fingers are curled: tips y > pip y (in normalized coords, higher y = lower on screen)
-  // We check 4 fingers (not thumb): tips 8,12,16,20 vs pips 6,10,14,18
-  const fingers=[[8,6],[12,10],[16,14],[20,18]];
-  let curled=0;
-  fingers.forEach(([tip,pip])=>{
-    // tip is closer to wrist (higher y value) than pip → curled
-    if(lm[tip].y>lm[pip].y+0.01) curled++;
-  });
-  return curled>=3; // 3 of 4 fingers curled = fist
-}
+  // ═══ PIANO ═══
+  const PIANO_START_MIDI=48;
+  const PIANO_WHITE_PATTERN=[0,2,4,5,7,9,11];
+  const PIANO_BLACK_PATTERN=[1,3,null,6,8,10,null];
+  let pianoWhiteEls=[],pianoBlackEls=[],pianoNameEls=[],litMidi=-1;
+  const pianoKeyRects=[]; // {midi, x, y, w, h, isBlack}
+  const pianoLayout={width:320,height:102};
+  let currentMelodyMidi=-1;
 
-// Check if right hand index tip is over the piano SVG area
-function isOverPiano(screenX,screenY){
-  const svgEl=document.getElementById('piano-svg');
-  if(!svgEl)return false;
-  const rect=svgEl.getBoundingClientRect();
-  // Add small margin around piano
-  const margin=20;
-  return screenX>=rect.left-margin&&screenX<=rect.right+margin&&
-         screenY>=rect.top-margin&&screenY<=rect.bottom+margin;
-}
+  function getPianoVisualPreset(numOct){
+    if(numOct===2) return {min:420, vw:54, max:760, hMin:170, hVw:22, hMax:280};
+    if(numOct===4) return {min:500, vw:64, max:980, hMin:170, hVw:22, hMax:280};
+    return {min:460, vw:58, max:860, hMin:170, hVw:22, hMax:280};
+  }
 
-function processHands(rightLm,leftLm){
-  const noteBig=document.getElementById('note-big');
-  const leftCursor=document.getElementById('left-cursor');
-  const rightCursor=document.getElementById('right-cursor');
+  function buildPiano(){
+    const svg=document.getElementById('piano-svg');
+    const gW=document.getElementById('piano-whites'),gB=document.getElementById('piano-blacks');
+    gW.innerHTML=''; gB.innerHTML='';
+    pianoWhiteEls=[]; pianoBlackEls=[]; pianoNameEls=[]; pianoKeyRects.length=0;
 
-  // ── LEFT HAND → CHORD WHEEL ──
-  if(leftLm){
-    const tipX=(1-leftLm[8].x)*window.innerWidth;
-    const tipY=leftLm[8].y*window.innerHeight;
+    const numOct=S.range||3;
+    const preset=getPianoVisualPreset(numOct);
+    svg.style.width=`clamp(${preset.min}px,${preset.vw}vw,${preset.max}px)`;
+    svg.style.height=`clamp(${preset.hMin}px,${preset.hVw}vw,${preset.hMax}px)`;
 
-    const wheelCard=document.querySelector('.wheel-card');
-    const wr=wheelCard.getBoundingClientRect();
-    const relX=tipX-wr.left,relY=tipY-wr.top;
-    leftCursor.style.display='block';
-    leftCursor.style.left=relX+'px'; leftCursor.style.top=relY+'px';
+    // Dynamically fit white key width based on selected OCT range
+    const VIEW_W=560,VIEW_H=188,SIDE_PAD=16;
+    const totalWhites=7*numOct;
+    const WHITE_W=Math.max(14,Math.floor((VIEW_W-SIDE_PAD*2)/totalWhites));
+    const WHITE_H=168;
+    const BLACK_W=Math.max(10,Math.round(WHITE_W*0.62));
+    const BLACK_H=104;
+    const totalW=totalWhites*WHITE_W;
+    const startX=(VIEW_W-totalW)/2,y0=9;
+    svg.setAttribute('viewBox',`0 0 ${VIEW_W} ${VIEW_H}`);
+    pianoLayout.width=VIEW_W;
+    pianoLayout.height=VIEW_H;
 
-    const svgX=(relX/wr.width)*260,svgY=(relY/wr.height)*260;
-    const sliceIdx=sliceFromSvgPoint(svgX,svgY);
+    let wIdx=0;
+    for(let oct=0;oct<numOct;oct++){
+      PIANO_WHITE_PATTERN.forEach(semi=>{
+        const midi=PIANO_START_MIDI+oct*12+semi,x=startX+wIdx*WHITE_W;
+        const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+        rect.setAttribute('x',x+1);rect.setAttribute('y',y0);
+        rect.setAttribute('width',WHITE_W-2);rect.setAttribute('height',WHITE_H);
+        rect.setAttribute('rx',2);rect.setAttribute('class','piano-white');
+        rect.dataset.midi=midi; gW.appendChild(rect);
+        pianoWhiteEls.push({el:rect,midi});
+        pianoKeyRects.push({midi,x:x+1,y:y0,w:WHITE_W-2,h:WHITE_H,isBlack:false});
+        if(NOTE_NAMES[midi%12]==='C'){
+          const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+          txt.setAttribute('x',x+WHITE_W/2);txt.setAttribute('y',y0+WHITE_H-7);
+          txt.setAttribute('class','piano-note-name');txt.dataset.midi=midi;
+          txt.textContent=NOTE_NAMES[midi%12]+(Math.floor(midi/12)-1);
+          gW.appendChild(txt);pianoNameEls.push({el:txt,midi});
+          if(oct>0){const sep=document.createElementNS('http://www.w3.org/2000/svg','line');
+            sep.setAttribute('x1',x+0.5);sep.setAttribute('y1',y0);
+            sep.setAttribute('x2',x+0.5);sep.setAttribute('y2',y0+WHITE_H);
+            sep.setAttribute('class','piano-oct-sep');gW.appendChild(sep);}
+        }
+        wIdx++;
+      });
+    }
+    wIdx=0;
+    for(let oct=0;oct<numOct;oct++){
+      PIANO_BLACK_PATTERN.forEach((semi,pi)=>{
+        if(semi===null){wIdx++;return;}
+        const midi=PIANO_START_MIDI+oct*12+semi,x=startX+wIdx*WHITE_W+WHITE_W-BLACK_W/2;
+        const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+        rect.setAttribute('x',x);rect.setAttribute('y',y0);
+        rect.setAttribute('width',BLACK_W);rect.setAttribute('height',BLACK_H);
+        rect.setAttribute('rx',2);rect.setAttribute('class','piano-black');
+        rect.dataset.midi=midi; gB.appendChild(rect);
+        pianoBlackEls.push({el:rect,midi});
+        pianoKeyRects.push({midi,x,y:y0,w:BLACK_W,h:BLACK_H,isBlack:true});
+        wIdx++;
+      });
+    }
+  }
 
-    if(sliceIdx===-1){
-      // Finger stays in center circle for a short dwell → MUTE chord
-      centerHoldFrames++;
-      if(centerHoldFrames>=CENTER_HOLD_TO_MUTE&&!chordMuted){
-        chordMuted=true;
+  function pianoKeyFromScreen(screenX,screenY){
+    const svgEl=document.getElementById('piano-svg');
+    const rect=svgEl.getBoundingClientRect();
+    const sx=(screenX-rect.left)/rect.width*pianoLayout.width;
+    const sy=(screenY-rect.top)/rect.height*pianoLayout.height;
+    // Black keys first (higher z)
+    for(const k of pianoKeyRects.filter(k=>k.isBlack))
+      if(sx>=k.x&&sx<=k.x+k.w&&sy>=k.y&&sy<=k.y+k.h) return k.midi;
+    for(const k of pianoKeyRects.filter(k=>!k.isBlack))
+      if(sx>=k.x&&sx<=k.x+k.w&&sy>=k.y&&sy<=k.y+k.h) return k.midi;
+    // Fallback: nearest white key by x
+    const whites=pianoKeyRects.filter(k=>!k.isBlack);
+    if(!whites.length) return -1;
+    return whites.reduce((b,k)=>Math.abs(sx-(k.x+k.w/2))<Math.abs(sx-(b.x+b.w/2))?k:b).midi;
+  }
+
+  function litPianoKeys(midiList){
+    const midiSet=new Set((midiList||[]).filter(m=>m>=0));
+    const [onlyMidi]=midiSet;
+    if(midiSet.size===1&&onlyMidi===litMidi)return;
+    litMidi=midiSet.size===1?onlyMidi:-1;
+    pianoWhiteEls.forEach(({el,midi:m})=>{
+      const on=midiSet.has(m);
+      el.classList.toggle('lit',on);
+      el.classList.toggle('pressed',on);
+    });
+    pianoBlackEls.forEach(({el,midi:m})=>{
+      const on=midiSet.has(m);
+      el.classList.toggle('lit',on);
+      el.classList.toggle('pressed',on);
+    });
+    pianoNameEls.forEach(({el,midi:m})=>el.classList.toggle('lit',midiSet.has(m)));
+    const noteEl=document.getElementById('piano-active-note');
+    if(midiSet.size===1){
+      const [midi]=midiSet;
+      noteEl.textContent=NOTE_NAMES[midi%12]+(Math.floor(midi/12)-1);
+      noteEl.classList.remove('empty');
+    }else{
+      noteEl.textContent='—';
+      noteEl.classList.add('empty');
+    }
+  }
+  function clearPianoLit(){litPianoKeys([]);}
+  function playMelodyPiano(midi,vol){
+    const v=Math.max(0.08,Math.min(0.45,vol*0.9));
+    if(currentMelodyMidi!==midi){
+      noteOff('melody');
+      noteOn('melody',midiToFreq(midi),v);
+      currentMelodyMidi=midi;
+    }else{
+      noteUpdate('melody',midiToFreq(midi),Math.max(0.06,v*0.78));
+    }
+  }
+
+  function clearZoneChord(){document.getElementById('zone-chord-wheel').classList.remove('active');}
+  function clearZoneMelody(){clearPianoLit();document.getElementById('zone-piano-wrap').classList.remove('active');}
+
+  // ═══ MAIN PROCESSING ═══
+  // Detect fist: all finger tips closer to wrist than knuckles
+  function isFist(lm){
+    // Check if fingers are curled: tips y > pip y (in normalized coords, higher y = lower on screen)
+    // We check 4 fingers (not thumb): tips 8,12,16,20 vs pips 6,10,14,18
+    const fingers=[[8,6],[12,10],[16,14],[20,18]];
+    let curled=0;
+    fingers.forEach(([tip,pip])=>{
+      // tip is closer to wrist (higher y value) than pip → curled
+      if(lm[tip].y>lm[pip].y+0.01) curled++;
+    });
+    return curled>=3; // 3 of 4 fingers curled = fist
+  }
+
+  // Check if right hand index tip is over the piano SVG area
+  function isOverPiano(screenX,screenY){
+    const svgEl=document.getElementById('piano-svg');
+    if(!svgEl)return false;
+    const rect=svgEl.getBoundingClientRect();
+    // Add small margin around piano
+    const margin=20;
+    return screenX>=rect.left-margin&&screenX<=rect.right+margin&&
+           screenY>=rect.top-margin&&screenY<=rect.bottom+margin;
+  }
+
+  function thumbSpreadPercent(lm){
+    return Math.round(pinchToLoudness(pinchDistance(lm))*100);
+  }
+
+  function processHands(rightLm,leftLm){
+    const noteBig=document.getElementById('note-big');
+    const leftCursor=document.getElementById('left-cursor');
+    const rightCursor=document.getElementById('right-cursor');
+
+    let statMelody='--- Hz';
+    let statChord='---';
+    let statVol='---';
+    let statPinch='---';
+
+    // ── LEFT HAND → CHORD WHEEL (âm lượng chỉ từ tay trái: ngón cái ↔ trỏ) ──
+    if(leftLm){
+      const tipX=(1-leftLm[8].x)*window.innerWidth;
+      const tipY=leftLm[8].y*window.innerHeight;
+
+      const wheelCard=document.querySelector('.wheel-card');
+      const wr=wheelCard.getBoundingClientRect();
+      const relX=tipX-wr.left,relY=tipY-wr.top;
+
+      // Kiểm tra ngón trỏ có đang nằm trong vùng pizza wheel không
+      const insideWheel=(relX>=0&&relX<=wr.width&&relY>=0&&relY<=wr.height);
+
+      leftCursor.style.display='block';
+      leftCursor.style.left=relX+'px'; leftCursor.style.top=relY+'px';
+
+      if(insideWheel){
+        const svgX=(relX/wr.width)*260,svgY=(relY/wr.height)*260;
+        const sliceIdx=sliceFromSvgPoint(svgX,svgY);
+
+        if(sliceIdx===-1){
+          centerHoldFrames++;
+          if(centerHoldFrames>=CENTER_HOLD_TO_MUTE&&!chordMuted){
+            chordMuted=true;
+            noteOff('chord0');noteOff('chord1');noteOff('chord2');noteOff('chord3');
+            updateCenterMuteVisual();
+          }
+        } else {
+          centerHoldFrames=0;
+          if(chordMuted){
+            chordMuted=false;
+            updateCenterMuteVisual();
+          }
+          if(sliceIdx!==currentWheelIdx) highlightWheelSlice(sliceIdx);
+        }
+
+        document.getElementById('zone-chord-wheel').classList.add('active');
+
+        if(!chordMuted){
+          const ch=WHEEL_CHORDS[currentWheelIdx];
+          const vol=thumbSpreadGain(leftLm,0.38);
+          noteUpdate('chord0',midiToFreq(BASE_MIDI+ch.semis[0]),vol);
+          noteUpdate('chord1',midiToFreq(BASE_MIDI+(ch.semis[1]||ch.semis[0]+4)),vol*0.8);
+          noteUpdate('chord2',midiToFreq(BASE_MIDI+(ch.semis[2]||ch.semis[0]+7)),vol*0.8);
+          if(ch.semis[3]!==undefined) noteUpdate('chord3',midiToFreq(BASE_MIDI+ch.semis[3]),vol*0.7);
+          else noteOff('chord3');
+          statChord=ch.label;
+        } else {
+          noteOff('chord0');noteOff('chord1');noteOff('chord2');noteOff('chord3');
+          statChord='MUTE';
+        }
+      } else {
+        // Tay trái detected nhưng ngón trỏ ra ngoài pizza wheel → ngắt hợp âm
+        centerHoldFrames=0;
+        if(chordMuted){chordMuted=false;updateCenterMuteVisual();}
         noteOff('chord0');noteOff('chord1');noteOff('chord2');noteOff('chord3');
-        updateCenterMuteVisual();
+        clearZoneChord();
+        statChord='---';
       }
     } else {
       centerHoldFrames=0;
-      if(chordMuted){
-        chordMuted=false;
-        updateCenterMuteVisual();
-      }
-      if(sliceIdx!==currentWheelIdx) highlightWheelSlice(sliceIdx);
-    }
-
-    document.getElementById('zone-chord-wheel').classList.add('active');
-
-    if(!chordMuted){
-      const ch=WHEEL_CHORDS[currentWheelIdx];
-      const vol=yToVol(leftLm[0].y)*0.38;
-      noteUpdate('chord0',midiToFreq(BASE_MIDI+ch.semis[0]),vol);
-      noteUpdate('chord1',midiToFreq(BASE_MIDI+(ch.semis[1]||ch.semis[0]+4)),vol*0.8);
-      noteUpdate('chord2',midiToFreq(BASE_MIDI+(ch.semis[2]||ch.semis[0]+7)),vol*0.8);
-      if(ch.semis[3]!==undefined) noteUpdate('chord3',midiToFreq(BASE_MIDI+ch.semis[3]),vol*0.7);
-      else noteOff('chord3');
-      setStats({chord:ch.label});
-    } else {
+      leftCursor.style.display='none';
+      if(chordMuted){chordMuted=false;updateCenterMuteVisual();}
       noteOff('chord0');noteOff('chord1');noteOff('chord2');noteOff('chord3');
-      setStats({chord:'MUTE'});
+      clearZoneChord();
+      statChord='---';
     }
-  } else {
-    centerHoldFrames=0;
-    leftCursor.style.display='none';
-    if(chordMuted){chordMuted=false;updateCenterMuteVisual();}
-    noteOff('chord0');noteOff('chord1');noteOff('chord2');noteOff('chord3');
-    clearZoneChord(); setStats({chord:'---'});
-  }
 
-  // ── RIGHT HAND → PIANO ──
-  if(rightLm){
-    const tipX=(1-rightLm[8].x)*window.innerWidth;
-    const tipY=rightLm[8].y*window.innerHeight;
-    const pinch=pinchDistance(rightLm);
-    const vol=yToVol(rightLm[0].y);
-    const overPiano=isOverPiano(tipX,tipY);
+    // ── RIGHT HAND → PIANO (âm lượng chỉ từ tay phải: ngón cái ↔ trỏ) ──
+    if(rightLm){
+      const tipX=(1-rightLm[8].x)*window.innerWidth;
+      const tipY=rightLm[8].y*window.innerHeight;
+      const overPiano=isOverPiano(tipX,tipY);
+      const volMel=thumbSpreadGain(rightLm,0.5);
 
-    // Floating dot cursor — red when outside piano
-    rightCursor.style.display='block';
-    rightCursor.style.left=tipX+'px'; rightCursor.style.top=tipY+'px';
-    rightCursor.style.background=!overPiano?'rgba(255,60,60,0.85)':'rgba(200,255,87,0.9)';
-    rightCursor.style.boxShadow=!overPiano?'0 0 12px rgba(255,60,60,0.7)':'0 0 12px rgba(200,255,87,0.7)';
+      rightCursor.style.display='block';
+      rightCursor.style.left=tipX+'px'; rightCursor.style.top=tipY+'px';
+      rightCursor.style.background=!overPiano?'rgba(255,60,60,0.85)':'rgba(200,255,87,0.9)';
+      rightCursor.style.boxShadow=!overPiano?'0 0 12px rgba(255,60,60,0.7)':'0 0 12px rgba(200,255,87,0.7)';
 
-    const midiHit=(overPiano?pianoKeyFromScreen(tipX,tipY):-1);
-    noteBig.classList.add('visible');
-    document.getElementById('note-letter').textContent=midiHit>=0?NOTE_NAMES[midiHit%12]:'—';
-    document.getElementById('note-hz').textContent=midiHit>=0?Math.round(midiToFreq(midiHit))+' Hz':'—';
+      const midiHit=(overPiano?pianoKeyFromScreen(tipX,tipY):-1);
+      noteBig.classList.add('visible');
+      document.getElementById('note-letter').textContent=midiHit>=0?NOTE_NAMES[midiHit%12]:'—';
+      document.getElementById('note-hz').textContent=midiHit>=0?Math.round(midiToFreq(midiHit))+' Hz':'—';
 
-    if(midiHit>=0){
-      playMelodyPiano(midiHit,vol);
-      litPianoKeys([midiHit]);
+      if(midiHit>=0){
+        playMelodyPiano(midiHit,volMel);
+        litPianoKeys([midiHit]);
+        statMelody=Math.round(midiToFreq(midiHit))+' Hz';
+      } else {
+        noteOff('melody');
+        currentMelodyMidi=-1;
+        clearZoneMelody();
+      }
+
+      document.getElementById('zone-piano-wrap').classList.add('active');
+      statPinch=!overPiano?'OUT':`△ ${thumbSpreadPercent(rightLm)}%`;
     } else {
+      rightCursor.style.display='none';
       noteOff('melody');
       currentMelodyMidi=-1;
       clearZoneMelody();
+      statMelody='--- Hz';
+      statPinch='---';
     }
 
-    document.getElementById('zone-piano-wrap').classList.add('active');
-    const globalLoudness=dualHandLoudness(leftLm,rightLm);
-    if(masterGain) masterGain.gain.setTargetAtTime(0.02+globalLoudness*0.98,ctx.currentTime,0.05);
-    setStats({
-      melody:(midiHit>=0)?Math.round(midiToFreq(midiHit))+' Hz':'---',
-      volume:Math.round(globalLoudness*100)+'%',
-      pinch:(!overPiano?'OUT':pinch<0.05?'PINCH':`${Math.round((1-pinch*6)*100)}%`),
-    });
-  } else {
-    rightCursor.style.display='none';
-    noteOff('melody');
-    currentMelodyMidi=-1;
-    clearZoneMelody();
-    setStats({melody:'--- Hz',volume:'---',pinch:'---'});
+    // Không trộn master gain giữa hai tay — mỗi oscillator đã có gain riêng
+    const volParts=[];
+    if(leftLm){
+      if(chordMuted) volParts.push('← mute');
+      else volParts.push(`← ${thumbSpreadPercent(leftLm)}%`);
+    }
+    if(rightLm) volParts.push(`→ ${thumbSpreadPercent(rightLm)}%`);
+    statVol=volParts.length?volParts.join(' · '):'---';
+
+    setStats({melody:statMelody,volume:statVol,pinch:statPinch,chord:statChord});
   }
-}
 
-function setStats({melody,volume,pinch,chord}){
-  const set=(id,val)=>{
-    if(val===undefined)return;
-    const el=document.getElementById(id);
-    el.textContent=val; el.classList.toggle('inactive',val==='---'||val==='--- Hz');
-  };
-  set('stat-melody',melody);set('stat-volume',volume);set('stat-pinch',pinch);set('stat-chord',chord);
-}
+  function setStats({melody,volume,pinch,chord}){
+    const set=(id,val)=>{
+      if(val===undefined)return;
+      const el=document.getElementById(id);
+      el.textContent=val; el.classList.toggle('inactive',val==='---'||val==='--- Hz');
+    };
+    set('stat-melody',melody);set('stat-volume',volume);set('stat-pinch',pinch);set('stat-chord',chord);
+  }
 
-// CANVAS
-const HAND_CONNECTIONS=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
-function drawHands(){
-  const canvas=document.getElementById('canvas-hand');
-  const c2=canvas.getContext('2d');
-  canvas.width=canvas.offsetWidth; canvas.height=canvas.offsetHeight;
-  c2.clearRect(0,0,canvas.width,canvas.height);
-  if(!lastResults?.multiHandLandmarks)return;
-  const W=canvas.width,H=canvas.height;
-  const handedness=lastResults.multiHandedness||[];
-  lastResults.multiHandLandmarks.forEach((lm,hIdx)=>{
-    const label=handedness[hIdx]?.label||'Right';
-    const isLeft=(label==='Right'); // camera Right = screen Left = chord hand
-    const col=isLeft?'rgba(77,168,255,0.45)':'rgba(200,255,87,0.4)';
-    const tipCol=isLeft?'#4da8ff':'#c8ff57';
-    c2.strokeStyle=col; c2.lineWidth=1.5; c2.lineJoin='round';
-    HAND_CONNECTIONS.forEach(([a,b])=>{
-      c2.beginPath();c2.moveTo((1-lm[a].x)*W,lm[a].y*H);c2.lineTo((1-lm[b].x)*W,lm[b].y*H);c2.stroke();
+  // CANVAS
+  const HAND_CONNECTIONS=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
+  function drawHands(){
+    const canvas=document.getElementById('canvas-hand');
+    const c2=canvas.getContext('2d');
+    canvas.width=canvas.offsetWidth; canvas.height=canvas.offsetHeight;
+    c2.clearRect(0,0,canvas.width,canvas.height);
+    if(!lastResults?.multiHandLandmarks)return;
+    const W=canvas.width,H=canvas.height;
+    const handedness=lastResults.multiHandedness||[];
+    lastResults.multiHandLandmarks.forEach((lm,hIdx)=>{
+      const label=handedness[hIdx]?.label||'Right';
+      const isLeft=(label==='Right'); // camera Right = screen Left = chord hand
+      const col=isLeft?'rgba(77,168,255,0.45)':'rgba(200,255,87,0.4)';
+      const tipCol=isLeft?'#4da8ff':'#c8ff57';
+      c2.strokeStyle=col; c2.lineWidth=1.5; c2.lineJoin='round';
+      HAND_CONNECTIONS.forEach(([a,b])=>{
+        c2.beginPath();c2.moveTo((1-lm[a].x)*W,lm[a].y*H);c2.lineTo((1-lm[b].x)*W,lm[b].y*H);c2.stroke();
+      });
+      lm.forEach((pt,i)=>{
+        c2.beginPath();c2.arc((1-pt.x)*W,pt.y*H,TIPS.includes(i)?5:2.5,0,Math.PI*2);
+        c2.fillStyle=TIPS.includes(i)?tipCol:col;c2.fill();
+      });
     });
-    lm.forEach((pt,i)=>{
-      c2.beginPath();c2.arc((1-pt.x)*W,pt.y*H,TIPS.includes(i)?5:2.5,0,Math.PI*2);
-      c2.fillStyle=TIPS.includes(i)?tipCol:col;c2.fill();
+  }
+  function drawWaveform(){
+    const canvas=document.getElementById('canvas-wave');
+    const c2=canvas.getContext('2d');
+    const W=canvas.offsetWidth,H=32;
+    canvas.width=W;canvas.height=H;c2.clearRect(0,0,W,H);
+    if(analyser&&wfBuf){
+      analyser.getByteTimeDomainData(wfBuf);
+      c2.beginPath();c2.strokeStyle=S.handCount>0?'rgba(200,255,87,0.65)':'rgba(255,255,255,0.09)';c2.lineWidth=1.5;
+      const step=W/wfBuf.length;
+      for(let i=0;i<wfBuf.length;i++){const v=wfBuf[i]/128-1,x=i*step,y=H/2+v*(H/2.2);i===0?c2.moveTo(x,y):c2.lineTo(x,y);}
+      c2.stroke();
+    }else{c2.strokeStyle='rgba(255,255,255,0.07)';c2.lineWidth=1;c2.beginPath();c2.moveTo(0,H/2);c2.lineTo(W,H/2);c2.stroke();}
+  }
+  function loop(){drawHands();drawWaveform();requestAnimationFrame(loop);}
+
+  function setupControls(){
+    document.querySelectorAll('.tog-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const g=btn.dataset.group;
+        document.querySelectorAll(`.tog-btn[data-group="${g}"]`).forEach(b=>b.classList.remove('on'));
+        btn.classList.add('on');
+        S[g]=btn.dataset.val;
+        if(g==='scale'){
+          // Keep chord family consistent with selected scale
+          buildChordWheel();
+        }
+        if(g==='range'){
+          S.range=parseInt(btn.dataset.val,10);
+          buildPiano();
+        }
+      });
     });
-  });
-}
-function drawWaveform(){
-  const canvas=document.getElementById('canvas-wave');
-  const c2=canvas.getContext('2d');
-  const W=canvas.offsetWidth,H=32;
-  canvas.width=W;canvas.height=H;c2.clearRect(0,0,W,H);
-  if(analyser&&wfBuf){
-    analyser.getByteTimeDomainData(wfBuf);
-    c2.beginPath();c2.strokeStyle=S.handCount>0?'rgba(200,255,87,0.65)':'rgba(255,255,255,0.09)';c2.lineWidth=1.5;
-    const step=W/wfBuf.length;
-    for(let i=0;i<wfBuf.length;i++){const v=wfBuf[i]/128-1,x=i*step,y=H/2+v*(H/2.2);i===0?c2.moveTo(x,y):c2.lineTo(x,y);}
-    c2.stroke();
-  }else{c2.strokeStyle='rgba(255,255,255,0.07)';c2.lineWidth=1;c2.beginPath();c2.moveTo(0,H/2);c2.lineTo(W,H/2);c2.stroke();}
-}
-function loop(){drawHands();drawWaveform();requestAnimationFrame(loop);}
+  }
 
-function setupControls(){
-  document.querySelectorAll('.tog-btn').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const g=btn.dataset.group;
-      document.querySelectorAll(`.tog-btn[data-group="${g}"]`).forEach(b=>b.classList.remove('on'));
-      btn.classList.add('on');
-      S[g]=btn.dataset.val;
-      if(g==='scale'){
-        // Keep chord family consistent with selected scale
-        buildChordWheel();
-      }
-      if(g==='range'){
-        S.range=parseInt(btn.dataset.val,10);
-        buildPiano();
-      }
+  function checkOrientation(){
+    document.getElementById('screen-rotate').style.display=(window.innerWidth<window.innerHeight&&window.innerWidth<768)?'flex':'none';
+  }
+
+  async function boot(){
+    const bar=document.getElementById('load-bar'),text=document.getElementById('load-text');
+    let p=0;
+    const progress=(to,label)=>new Promise(res=>{
+      text.textContent=label;
+      const int=setInterval(()=>{p=Math.min(p+2,to);bar.style.width=p+'%';if(p>=to){clearInterval(int);res();}},30);
     });
-  });
-}
+    await progress(30,'Đang tải thư viện...');
+    await progress(70,'Đang khởi tạo mô hình...');
+    await progress(100,'Sẵn sàng!');
+    await new Promise(r=>setTimeout(r,400));
+    document.getElementById('screen-loading').style.display='none';
+    document.getElementById('screen-splash').style.display='flex';
+    document.getElementById('btn-start').addEventListener('click',startApp);
+  }
 
-function checkOrientation(){
-  document.getElementById('screen-rotate').style.display=(window.innerWidth<window.innerHeight&&window.innerWidth<768)?'flex':'none';
-}
+  async function startApp(){
+    document.getElementById('screen-splash').style.display='none';
+    document.getElementById('screen-app').style.display='block';
+    audioInit();
+    try{
+      await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:1280,height:720}});
+      setupMediaPipe();
+    }catch(e){document.getElementById('cam-error').style.display='flex';return;}
+    setupControls();buildChordWheel();buildPiano();
+    checkOrientation();window.addEventListener('resize',checkOrientation);
+    loop();
+  }
 
-async function boot(){
-  const bar=document.getElementById('load-bar'),text=document.getElementById('load-text');
-  let p=0;
-  const progress=(to,label)=>new Promise(res=>{
-    text.textContent=label;
-    const int=setInterval(()=>{p=Math.min(p+2,to);bar.style.width=p+'%';if(p>=to){clearInterval(int);res();}},30);
-  });
-  await progress(30,'Đang tải thư viện...');
-  await progress(70,'Đang khởi tạo mô hình...');
-  await progress(100,'Sẵn sàng!');
-  await new Promise(r=>setTimeout(r,400));
-  document.getElementById('screen-loading').style.display='none';
-  document.getElementById('screen-splash').style.display='flex';
-  document.getElementById('btn-start').addEventListener('click',startApp);
-}
-
-async function startApp(){
-  document.getElementById('screen-splash').style.display='none';
-  document.getElementById('screen-app').style.display='block';
-  audioInit();
-  try{
-    await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:1280,height:720}});
-    setupMediaPipe();
-  }catch(e){document.getElementById('cam-error').style.display='flex';return;}
-  setupControls();buildChordWheel();buildPiano();
-  checkOrientation();window.addEventListener('resize',checkOrientation);
-  loop();
-}
-
-window.addEventListener('DOMContentLoaded',boot);
-</script>
+  window.addEventListener('DOMContentLoaded',boot);
+  </script>
 </body>
 </html>
