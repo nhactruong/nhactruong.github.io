@@ -1,21 +1,4 @@
-/* ================================================
-   index.js
-   1. Ẩn loader sau khi trang load xong
-   2. Hiệu ứng cursor glow (lerp smoothing)
-   3. Scroll reveal (IntersectionObserver)
-   4. Active nav link khi cuộn
-   5. Hiệu ứng nghiêng 3D khi hover card
-   ================================================ */
-
-/* ── 1. LOADER ───────────────────────────────── */
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.getElementById('page-loader').classList.add('gone');
-  }, 600);
-});
-
-
-/* ── 2. CURSOR GLOW ──────────────────────────── */
+/* ── 2. CURSOR GLOW ── */
 const glowEl = document.getElementById('cursor-glow');
 let mouseX = 0, mouseY = 0;
 let glowX  = 0, glowY  = 0;
@@ -25,58 +8,79 @@ document.addEventListener('mousemove', (e) => {
   mouseY = e.clientY;
 });
 
-function animateGlow() {
+(function animateGlow() {
   glowX += (mouseX - glowX) * 0.1;
   glowY += (mouseY - glowY) * 0.1;
   glowEl.style.left = `${glowX}px`;
   glowEl.style.top  = `${glowY}px`;
   requestAnimationFrame(animateGlow);
-}
-
-animateGlow();
+})();
 
 
-/* ── 3. SCROLL REVEAL ────────────────────────── */
+/* ── 3. SCROLL REVEAL ── */
 const revealObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
+      if (entry.isIntersecting) entry.target.classList.add('visible');
     });
   },
   { threshold: 0.12 }
 );
 
-document.querySelectorAll('.course-card').forEach((card) => revealObserver.observe(card));
-document.querySelectorAll('.edu-list li').forEach((item) => revealObserver.observe(item));
-document.querySelectorAll('.score-row').forEach((row)  => revealObserver.observe(row));
+document.querySelectorAll('.course-card, .edu-list li, .score-row').forEach((el) =>
+  revealObserver.observe(el)
+);
 
+/* ── 4. ACTIVE NAV ON CLICK & SCROLL ── */
+const navLinks = document.querySelectorAll('nav a');
+let isClicking = false; // Khai báo biến để theo dõi xem người dùng có đang click hay không
 
-/* ── 4. ACTIVE NAV ON SCROLL ─────────────────── */
-const sectionIds = ['contact', 'edu', 'scores', 'social', 'courses'];
-const navLinks   = document.querySelectorAll('nav a');
+navLinks.forEach(link => {
+  link.addEventListener('click', function(e) {
+    isClicking = true; // Bật cờ chặn khi click
+    
+    // 1. Xóa màu ở tất cả các nút
+    navLinks.forEach(l => l.classList.remove('active'));
+    
+    // 2. Thêm màu (class active) ngay lập tức vào nút vừa click
+    this.classList.add('active');
+
+    // 3. Khóa sự kiện theo dõi cuộn trong 800 mili-giây (thời gian đủ để trang trượt đến nơi)
+    // Sau đó mở lại để cuộn bằng tay vẫn hoạt động bình thường
+    setTimeout(() => {
+      isClicking = false;
+    }, 800);
+  });
+});
 
 window.addEventListener('scroll', () => {
-  let currentSection = '';
+  // Nếu đang trong quá trình click (trang đang tự động trượt) thì bỏ qua, không tính toán lại
+  if (isClicking) return; 
 
-  sectionIds.forEach((id) => {
+  let currentSection = '';
+  const sections = ['contact', 'edu', 'scores', 'social', 'courses'];
+
+  sections.forEach((id) => {
     const section = document.getElementById(id);
-    if (section && window.scrollY >= section.offsetTop - 120) {
-      currentSection = id;
+    if (section) {
+      const sectionTop = section.offsetTop;
+      // Trừ đi 150px để đổi màu ngay khi thẻ heading vừa chạm tới menu
+      if (window.scrollY >= sectionTop - 150) {
+        currentSection = id;
+      }
     }
   });
 
-  navLinks.forEach((link) => {
-    const isActive = link.getAttribute('href') === `#${currentSection}`;
-    link.classList.toggle('active', isActive);
-  });
+  if (currentSection) {
+    navLinks.forEach((link) => {
+      const href = link.getAttribute('href').replace('#', '');
+      link.classList.toggle('active', href === currentSection);
+    });
+  }
 }, { passive: true });
 
-
-/* ── 5. 3D CARD TILT ─────────────────────────── */
+/* ── 5. 3D CARD TILT ── */
 document.querySelectorAll('.course-card').forEach((card) => {
-
   card.addEventListener('mousemove', (e) => {
     const rect = card.getBoundingClientRect();
     const x = (e.clientX - rect.left)  / rect.width  - 0.5;
@@ -87,5 +91,18 @@ document.querySelectorAll('.course-card').forEach((card) => {
   card.addEventListener('mouseleave', () => {
     card.style.transform = '';
   });
+});
 
+
+/* ── 6. ZALO QR POPUP ── */
+const zaloWidget = document.getElementById('zalo-widget');
+const zaloPopup  = document.getElementById('zalo-qr-popup');
+
+zaloWidget.addEventListener('click', (e) => {
+  e.stopPropagation();
+  zaloPopup.classList.toggle('active');
+});
+
+document.addEventListener('click', () => {
+  zaloPopup.classList.remove('active');
 });
