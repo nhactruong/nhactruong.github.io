@@ -30,47 +30,6 @@ body {
   color: var(--text);
   overflow-x: hidden;
 }
-
-/* ================================================
-   LOADER
-   ================================================ */
-#page-loader {
-  position: fixed;
-  inset: 0;
-  background: #1a1a2e;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  transition: opacity 0.6s, visibility 0.6s;
-}
-
-#page-loader.gone {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.loader-ring {
-  width: 56px;
-  height: 56px;
-  border: 4px solid rgba(161, 235, 134, 0.2);
-  border-top-color: var(--green);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-.loader-text {
-  color: rgba(255, 255, 255, 0.6);
-  font-family: 'Syne', sans-serif;
-  letter-spacing: 2px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
 /* ================================================
    CURSOR GLOW
    ================================================ */
@@ -94,14 +53,6 @@ body {
   padding: 90px 20px 70px;
   position: relative;
   overflow: hidden;
-}
-
-#hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 80% at 70% 30%, rgba(255, 255, 255, 0.25), transparent 70%);
-  pointer-events: none;
 }
 
 .hero-title {
@@ -128,24 +79,6 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Blob decorations */
-.blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(40px);
-  opacity: 0.35;
-  animation: float 7s ease-in-out infinite alternate;
-}
-
-.blob1 { width: 220px; height: 220px; background: #fff;      top: -60px;  left: -60px; animation-delay: 0s; }
-.blob2 { width: 160px; height: 160px; background: #04AA6D;   top:  20px;  right: 10%; animation-delay: 2s; }
-.blob3 { width: 100px; height: 100px; background: #ffdd57;   bottom: -30px; left: 30%; animation-delay: 4s; }
-
-@keyframes float {
-  from { transform: translate(0, 0)    scale(1);    }
-  to   { transform: translate(30px, 20px) scale(1.12); }
-}
-
 /* ================================================
    NAV
    ================================================ */
@@ -161,8 +94,9 @@ nav {
   box-shadow: 0 2px 24px rgba(0, 0, 0, 0.18);
 }
 
-.nav-left,
-.nav-right { display: flex; }
+.nav-left, .nav-right { 
+  display: flex; 
+}
 
 nav a {
   color: rgba(255, 255, 255, 0.78);
@@ -521,6 +455,8 @@ footer a:hover { color: #fff; }
 @media (max-width: 480px) {
   #course-grid { grid-template-columns: 1fr; }
   nav a { padding: 12px 10px; font-size: 0.78rem; }
+  #zalo-widget { bottom: 20px; right: 20px; width: 50px; height: 50px; }
+  #zalo-widget img { width: 28px; height: 28px; }
 }
 
 /* ================================================
@@ -532,13 +468,14 @@ footer a:hover { color: #fff; }
   right: 30px;
   width: 60px;
   height: 60px;
-  background-color: #0068FF; /* Màu xanh chuẩn của Zalo */
+  background-color: #0068FF;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 16px rgba(0, 104, 255, 0.4);
-  z-index: 990; /* Đặt dưới loader (9999) và cursor (9998) nhưng trên các nội dung khác */
+  z-index: 990;
+  cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   animation: pulse-zalo 2s infinite;
 }
@@ -551,33 +488,50 @@ footer a:hover { color: #fff; }
 
 #zalo-widget:hover {
   transform: scale(1.1) translateY(-5px);
-  animation: none; /* Dừng hiệu ứng đập khi hover */
+  animation: none;
   box-shadow: 0 8px 24px rgba(0, 104, 255, 0.6);
 }
 
-/* Hiệu ứng nhịp đập (pulse) */
 @keyframes pulse-zalo {
-  0% {
-    box-shadow: 0 0 0 0 rgba(0, 104, 255, 0.6);
-  }
-  70% {
-    box-shadow: 0 0 0 15px rgba(0, 104, 255, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(0, 104, 255, 0);
-  }
+  0%   { box-shadow: 0 0 0 0   rgba(0, 104, 255, 0.6); }
+  70%  { box-shadow: 0 0 0 15px rgba(0, 104, 255, 0);   }
+  100% { box-shadow: 0 0 0 0   rgba(0, 104, 255, 0);   }
 }
 
-/* Responsive cho thiết bị di động (Mobile) */
-@media (max-width: 480px) {
-  #zalo-widget {
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-  }
-  #zalo-widget img {
-    width: 28px;
-    height: 28px;
-  }
+
+/* ── QR Popup ── */
+#zalo-qr-popup {
+  position: absolute;
+  bottom: 80px;
+  right: 0;
+  background: white;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  display: none;
+  text-align: center;
+  width: 250px;
+  cursor: default;
+}
+
+#zalo-qr-popup img {
+  width: 200px !important;
+  height: 200px !important;
+  margin-bottom: 10px;
+}
+
+#zalo-qr-popup p {
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+#zalo-qr-popup.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
