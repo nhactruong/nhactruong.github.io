@@ -104,7 +104,7 @@
           <li>Ly Thuong Kiet Primary School</li>
           <li>Ly Thuong Kiet Secondary School</li>
           <li>Van Hien High School</li>
-          <li>University of Economics - Technology for Industries</li>
+          <li>University of Economics and Industrial Engineering</li>
         </ol>
       </section>
 
@@ -159,15 +159,11 @@
         <ul class="social-list">
           <li>
             <span>Facebook</span>
-            <a href="https://www.facebook.com/tran.hieu.489500/" target="_blank" rel="noopener noreferrer">
-              Trần Hiếu <span aria-hidden="true">↗</span>
-            </a>
+            <a href="https://www.facebook.com/tran.hieu.489500/" target="_blank" rel="noopener noreferrer">Trần Hiếu</a>
           </li>
           <li>
             <span>Instagram</span>
-            <a href="https://www.instagram.com/hieu_trannt/" target="_blank" rel="noopener noreferrer">
-              INTJ <span aria-hidden="true">↗</span>
-            </a>
+            <a href="https://www.instagram.com/hieu_trannt/" target="_blank" rel="noopener noreferrer">INTJ</a>
           </li>
         </ul>
       </section>
@@ -279,75 +275,62 @@
     id="ai-toggle"
     class="ai-widget__button"
     type="button"
-    aria-label="Mở trợ lý AI"
+    aria-label="Open AI assistant"
     aria-controls="ai-chat"
     aria-expanded="false"
-  >
-    AI
-  </button>
+  >AI</button>
 
   <section
     id="ai-chat"
     class="ai-chat"
-    aria-label="Trợ lý AI"
+    aria-label="AI assistant"
     hidden
   >
 
     <header class="ai-chat__header">
       <div>
         <strong>AI Assistant</strong>
-        <span>Trò chuyện mô phỏng</span>
+        <span>Simulated conversation</span>
       </div>
 
       <button
         id="ai-close"
         class="ai-chat__close"
         type="button"
-        aria-label="Đóng trợ lý AI"
-      >
-        ×
-      </button>
+        aria-label="Close AI assistant"
+      >x</button>
     </header>
 
     <div
       id="ai-messages"
       class="ai-chat__messages"
       role="log"
-      aria-label="Lịch sử trò chuyện"
+      aria-label="Chat history"
       aria-relevant="additions"
       aria-live="polite"
     >
       <div class="ai-message ai-message--assistant">
-        Xin chào! Bạn có thể chào hỏi, hỏi thăm sức khoẻ hoặc nói lời tạm biệt.
+        Welcome! You can say hello or how are you or say good bye.
       </div>
     </div>
 
     <form id="ai-form" class="ai-chat__form">
-
-      <label class="visually-hidden" for="ai-input">
-        Nhập tin nhắn
-      </label>
-
+      <label class="visually-hidden" for="ai-input">Enter message</label>
       <textarea
         id="ai-input"
         class="ai-chat__input"
         rows="1"
         maxlength="1000"
-        placeholder="Nhập tin nhắn..."
+        placeholder="Enter message..."
         enterkeyhint="send"
         required
       ></textarea>
-
       <button
         id="ai-send"
         class="ai-chat__send"
         type="submit"
-      >
-        Gửi
-      </button>
-
+      >Send</button>
     </form>
-
   </section>
 
 </div>
