@@ -1,439 +1,931 @@
-/* ================================================
-   BIẾN MÀU SẮC TOÀN CỤC
-   ================================================ */
+/* ================================================================
+   1. DESIGN TOKENS
+   Các biến dùng chung giúp đổi màu, kích thước và hiệu ứng tại một nơi.
+   Dùng font hệ thống để không phát sinh yêu cầu tải font bên ngoài.
+   ================================================================ */
 :root {
-  --green:      #a1eb86;
-  --dark-green: #5cbf3a;
-  --accent:     #04AA6D;
-  --nav-bg:     #1a1a2e;
-  --left-bg:    #f0f7ed;
-  --footer-bg:  #1a1a2e;
-  --text:       #181818;
-  --muted:      #666;
-  --shadow:     0 8px 32px rgba(4, 170, 109, 0.10);
+  --color-primary: #087a53;
+  --color-primary-strong: #075f43;
+  --color-accent: #9be67e;
+  --color-navy: #172033;
+  --color-text: #18221d;
+  --color-muted: #5c6861;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f0f7ed;
+  --color-page: #f6faf4;
+  --color-border: rgba(8, 122, 83, 0.16);
+
+  --font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  --font-heading: var(--font-body);
+
+  --container-width: 1440px;
+  --nav-height: 56px;
+  --radius-sm: 0.65rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --shadow-sm: 0 0.25rem 1.25rem rgba(23, 32, 51, 0.08);
+  --shadow-md: 0 1rem 2.5rem rgba(8, 122, 83, 0.16);
+  --transition-fast: 180ms ease;
 }
 
-/* ================================================
-   RESET
-   ================================================ */
-*, *::before, *::after {
+/* ================================================================
+   2. RESET VÀ THIẾT LẬP NỀN
+   Chuẩn hóa box model, khoảng cách và hành vi cuộn toàn trang.
+   scroll-padding-top tránh tiêu đề bị thanh menu sticky che khuất.
+   ================================================================ */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--nav-height) + 1rem);
+}
 
 body {
-  font-family: 'DM Sans', sans-serif;
-  background: #f5f9f3;
-  color: var(--text);
-  overflow-x: hidden;
+  margin: 0;
+  min-width: 0;
+  background: var(--color-page);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  overflow-wrap: break-word;
 }
 
-/* ================================================
-   HERO
-   ================================================ */
-#hero {
-  background: linear-gradient(135deg, #a1eb86 0%, #5cbf3a 40%, #1a7a4a 100%);
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+}
+
+/* Khung giới hạn chiều rộng để nội dung không bị kéo quá dài trên màn hình lớn. */
+.page-container {
+  width: min(100%, var(--container-width));
+  margin-inline: auto;
+}
+
+/* Chỉ ẩn nội dung về mặt thị giác, trình đọc màn hình vẫn đọc được. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip link hỗ trợ người dùng bàn phím đi thẳng vào nội dung. */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 1000;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-navy);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-150%);
+  transition: transform var(--transition-fast);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* Focus ring thống nhất giúp thấy rõ phần tử đang được điều khiển bằng bàn phím. */
+:focus-visible {
+  outline: 3px solid #ffbf47;
+  outline-offset: 3px;
+}
+
+/* ================================================================
+   3. HERO
+   Tạo phần nhận diện đầu trang; gradient là CSS nên tải nhanh hơn ảnh nền.
+   ================================================================ */
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.24), transparent 28%),
+    linear-gradient(135deg, var(--color-accent), #49b863 48%, var(--color-primary-strong));
   text-align: center;
-  padding: 90px 20px 70px;
 }
 
-.hero-title {
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(2.5rem, 6vw, 5rem);
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -8% -45% 35%;
+  z-index: -1;
+  aspect-ratio: 1;
+  width: min(32rem, 70vw);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 50%;
+}
+
+.hero__content {
+  padding: clamp(4.5rem, 10vw, 7.5rem) 1.5rem clamp(3.5rem, 8vw, 6rem);
+}
+
+.hero__eyebrow,
+.courses__eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
   font-weight: 800;
-  color: #fff;
-  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
-.hero-sub {
-  margin-top: 10px;
-  color: rgba(255, 255, 255, 0.82);
-  font-weight: 300;
-  letter-spacing: 2px;
+.hero__eyebrow {
+  color: rgba(255, 255, 255, 0.86);
 }
 
-/* ================================================
-   NAV
-   ================================================ */
-nav {
-  background: var(--nav-bg);
+.hero__title {
+  margin: 0;
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-size: clamp(2.75rem, 7vw, 5.5rem);
+  font-weight: 850;
+  letter-spacing: -0.05em;
+  line-height: 0.98;
+  text-wrap: balance;
+  text-shadow: 0 0.25rem 1.5rem rgba(0, 0, 0, 0.16);
+}
+
+.hero__subtitle {
+  margin: 1rem 0 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  letter-spacing: 0.08em;
+}
+
+/* ================================================================
+   4. STICKY NAVIGATION
+   Thanh điều hướng luôn ở cạnh trên. overflow-x cho phép vuốt ngang trên mobile.
+   ================================================================ */
+.site-nav {
   position: sticky;
   top: 0;
   z-index: 100;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 10px;
-  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.18);
+  min-height: var(--nav-height);
+  background: rgba(23, 32, 51, 0.96);
+  box-shadow: 0 0.15rem 1.5rem rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(0.6rem);
 }
 
-.nav-left, .nav-right {
-  display: flex;
-}
-
-nav a {
-  color: rgba(255, 255, 255, 0.78);
-  padding: 16px 22px;
-  display: block;
-  text-decoration: none;
-  font-family: 'Syne', sans-serif;
-  font-weight: 700;
-  font-size: 0.88rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  position: relative;
-  transition: color 0.3s;
-}
-
-nav a::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: 10px;
-  width: 0;
-  height: 2px;
-  background: var(--green);
-  border-radius: 2px;
-  transform: translateX(-50%);
-  transition: width 0.35s;
-}
-
-nav a:hover        { color: #fff; }
-nav a:hover::after { width: 60%; }
-nav a.active       { color: var(--green); }
-
-/* ================================================
-   TWO-COLUMN LAYOUT
-   ================================================ */
-#flex-container {
-  display: flex;
-  min-height: 80vh;
-}
-
-#left-side {
-  flex: 0 0 32%;
-  background: var(--left-bg);
-  padding: 36px 28px;
-  border-right: 1px solid rgba(4, 170, 109, 0.12);
-}
-
-#right-side {
-  flex: 1;
-  padding: 36px 28px;
-  background: #f7faf5;
-}
-
-/* ================================================
-   SECTION HEADINGS
-   ================================================ */
-h2 {
-  font-family: 'Syne', sans-serif;
-  font-size: 1.4rem;
-  font-weight: 800;
-  margin: 28px 0 14px;
-  color: #1a1a2e;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-h2::before {
-  content: '';
-  display: inline-block;
-  width: 4px;
-  height: 1.3em;
-  background: linear-gradient(to bottom, var(--green), var(--accent));
-  border-radius: 2px;
-}
-
-/* ================================================
-   AVATAR
-   ================================================ */
-#avatar {
-  width: 70%;
-  border-radius: 50%;
-  display: block;
-  margin: 8px auto 14px;
-  border: 4px solid var(--green);
-  box-shadow: 0 0 0 8px rgba(161, 235, 134, 0.18), var(--shadow);
-  transition: transform 0.5s, box-shadow 0.5s;
-}
-
-#avatar:hover {
-  transform: scale(1.06) rotate(-2deg);
-  box-shadow: 0 0 0 14px rgba(161, 235, 134, 0.22), 0 16px 40px rgba(4, 170, 109, 0.2);
-}
-
-.subtitle {
-  text-align: center;
-  color: var(--muted);
-  font-style: italic;
-  margin-bottom: 12px;
-}
-
-/* ================================================
-   INFO LIST
-   ================================================ */
-.info-list {
-  list-style: none;
-}
-
-.info-list li {
-  padding: 7px 0;
-  border-bottom: 1px solid rgba(4, 170, 109, 0.09);
-  font-size: 0.95rem;
-}
-
-.info-list li strong { color: var(--accent); }
-
-/* ================================================
-   EDUCATION LIST
-   ================================================ */
-.edu-list {
-  list-style: none;
-}
-
-.edu-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 8px 0;
-  font-size: 0.95rem;
-  border-bottom: 1px solid rgba(4, 170, 109, 0.07);
-  counter-increment: edu-counter;
-}
-
-.edu-list {
-  counter-reset: edu-counter;
-}
-
-.edu-list li::before {
-  content: counter(edu-counter);
-  min-width: 28px;
-  height: 28px;
-  background: linear-gradient(135deg, var(--green), var(--accent));
-  color: #fff;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-family: 'Syne', sans-serif;
-  font-weight: 700;
-  font-size: 0.78rem;
-  flex-shrink: 0;
-}
-
-/* ================================================
-   SCORES TABLE
-   ================================================ */
-table {
-  border-collapse: collapse;
-  width: 100%;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-
-table th,
-table td {
-  border: 1px solid rgba(4, 170, 109, 0.12);
-  padding: 10px 12px;
-  text-align: center;
-}
-
-table tr:nth-child(even) { background: rgba(161, 235, 134, 0.08); }
-table tr                  { transition: background 0.25s; }
-table tr:hover            { background: rgba(4, 170, 109, 0.12); }
-
-table th {
-  background: var(--accent);
-  color: #fff;
-  font-family: 'Syne', sans-serif;
-  font-size: 0.88rem;
-}
-
-/* ================================================
-   SOCIAL LINKS
-   ================================================ */
-#left-side p a {
-  color: var(--accent);
-  font-weight: 600;
-  text-decoration: none;
-  border-bottom: 1.5px solid transparent;
-  transition: border-color 0.25s;
-}
-
-#left-side p a:hover { border-color: var(--accent); }
-
-/* ================================================
-   COURSE GRID
-   ================================================ */
-#course-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 22px;
-}
-
-.course-card {
-  background: #fff;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
-  cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.course-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 40px rgba(4, 170, 109, 0.18);
-}
-
-.course-card a {
-  display: block;
-  text-decoration: none;
-}
-
-.course-img {
-  width: 100%;
-  height: 130px;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.4s;
-}
-
-.course-card:hover .course-img { transform: scale(1.05); }
-
-.course-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  padding: 10px 12px 4px;
-  color: #1a1a2e;
-}
-
-.course-desc {
-  padding: 0 12px 14px;
-  font-size: 0.82rem;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-/* ================================================
-   FOOTER
-   ================================================ */
-footer {
-  text-align: center;
-  background: var(--footer-bg);
-  padding: 34px 40px;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.95rem;
-  position: relative;
-  overflow: hidden;
-}
-
-footer::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--green), var(--accent), #57f);
-}
-
-footer a {
-  color: var(--green);
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.25s;
-}
-
-footer a:hover { color: #fff; }
-
-/* ================================================
-   RESPONSIVE
-   ================================================ */
-@media (max-width: 860px) {
-  #flex-container { flex-wrap: wrap; }
-
-  #left-side {
-    flex: 100%;
-    border-right: none;
-    border-bottom: 1px solid rgba(4, 170, 109, 0.12);
-  }
-
-  #right-side { flex: 100%; }
-
-  #course-grid { grid-template-columns: repeat(2, 1fr); }
-
-  nav { flex-wrap: wrap; }
-}
-
-@media (max-width: 480px) {
-  #course-grid { grid-template-columns: 1fr; }
-  nav a { padding: 12px 10px; font-size: 0.78rem; }
-  #zalo-widget { bottom: 20px; right: 20px; width: 50px; height: 50px; }
-  #zalo-widget img { width: 28px; height: 28px; }
-}
-
-/* ================================================
-   ZALO CHAT WIDGET
-   ================================================ */
-#zalo-widget {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 60px;
-  height: 60px;
-  background-color: #0068FF;
-  border-radius: 50%;
+.site-nav__inner {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 16px rgba(0, 104, 255, 0.4);
-  z-index: 990;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-height: var(--nav-height);
+  padding-inline: 1rem;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
-#zalo-widget img {
-  width: 35px;
-  height: 35px;
-  object-fit: contain;
-}
-
-#zalo-widget:hover {
-  transform: scale(1.1) translateY(-5px);
-  box-shadow: 0 8px 24px rgba(0, 104, 255, 0.6);
-}
-
-/* QR Popup */
-#zalo-qr-popup {
-  position: absolute;
-  bottom: 80px;
-  right: 0;
-  background: white;
-  padding: 15px;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+.site-nav__inner::-webkit-scrollbar {
   display: none;
+}
+
+.site-nav__link {
+  position: relative;
+  flex: 0 0 auto;
+  padding: 1rem clamp(0.75rem, 2.2vw, 1.4rem);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.875rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color var(--transition-fast);
+}
+
+.site-nav__link::after {
+  content: "";
+  position: absolute;
+  right: 22%;
+  bottom: 0.55rem;
+  left: 22%;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transition: transform var(--transition-fast);
+}
+
+.site-nav__link:hover,
+.site-nav__link[aria-current="location"] {
+  color: #ffffff;
+}
+
+.site-nav__link:hover::after,
+.site-nav__link[aria-current="location"]::after {
+  transform: scaleX(1);
+}
+
+/* ================================================================
+   5. BỐ CỤC CHÍNH
+   Grid tách sidebar và danh sách khóa học. minmax(0, 1fr) ngăn tràn ngang.
+   ================================================================ */
+.profile-layout {
+  display: grid;
+  grid-template-columns: minmax(20rem, 0.9fr) minmax(0, 1.75fr);
+  min-height: 75vh;
+}
+
+.profile-sidebar {
+  min-width: 0;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border-right: 1px solid var(--color-border);
+  background: var(--color-surface-soft);
+}
+
+.courses {
+  min-width: 0;
+  padding: clamp(1.5rem, 3vw, 2.75rem);
+  background: var(--color-page);
+}
+
+.content-section,
+.courses {
+  scroll-margin-top: calc(var(--nav-height) + 1rem);
+}
+
+.content-section + .content-section {
+  margin-top: 2.25rem;
+}
+
+/* ================================================================
+   6. TIÊU ĐỀ SECTION
+   Thanh màu bên trái tạo dấu hiệu thị giác nhất quán giữa các phần.
+   ================================================================ */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0 0 1rem;
+  color: var(--color-navy);
+  font-family: var(--font-heading);
+  font-size: clamp(1.3rem, 2vw, 1.6rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+.section-title::before {
+  content: "";
+  flex: 0 0 0.28rem;
+  align-self: stretch;
+  min-height: 1.5rem;
+  border-radius: 999px;
+  background: linear-gradient(var(--color-accent), var(--color-primary));
+}
+
+/* ================================================================
+   7. THÔNG TIN CÁ NHÂN
+   width/height trong HTML giữ chỗ đúng tỷ lệ; height:auto và contain tránh cắt ảnh.
+   ================================================================ */
+.avatar {
+  width: min(100%, 17rem);
+  height: auto;
+  margin: 1.25rem auto 1rem;
+  border: 0.3rem solid var(--color-accent);
+  border-radius: var(--radius-md);
+  object-fit: contain;
+  box-shadow: 0 0 0 0.5rem rgba(155, 230, 126, 0.18), var(--shadow-sm);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.avatar:hover {
+  transform: translateY(-0.2rem);
+  box-shadow: 0 0 0 0.65rem rgba(155, 230, 126, 0.2), var(--shadow-md);
+}
+
+.profile-summary {
+  max-width: 28rem;
+  margin: 0 auto 1.25rem;
+  color: var(--color-muted);
+  font-style: italic;
   text-align: center;
-  width: 250px;
-  cursor: default;
 }
 
-#zalo-qr-popup img {
-  width: 200px !important;
-  height: 200px !important;
-  margin-bottom: 10px;
+.profile-details {
+  margin: 0;
 }
 
-#zalo-qr-popup p {
-  color: #333;
-  font-size: 14px;
-  font-weight: 600;
+.profile-details__row {
+  display: grid;
+  grid-template-columns: minmax(6rem, 0.7fr) 1.3fr;
+  gap: 0.75rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--color-border);
 }
 
-#zalo-qr-popup.active {
-  display: block;
+.profile-details dt {
+  color: var(--color-primary-strong);
+  font-weight: 750;
+}
+
+.profile-details dd {
+  margin: 0;
+}
+
+/* ================================================================
+   8. EDUCATION TIMELINE
+   CSS counter tự đánh số, giúp HTML chỉ cần chứa đúng nội dung danh sách.
+   ================================================================ */
+.timeline-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: education;
+}
+
+.timeline-list li {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--color-border);
+  counter-increment: education;
+}
+
+.timeline-list li::before {
+  content: counter(education);
+  display: grid;
+  width: 2rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+/* ================================================================
+   9. BẢNG ĐIỂM
+   Wrapper xử lý màn hình hẹp; border-spacing cho phép bo góc ổn định hơn.
+   ================================================================ */
+.table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+.score-table {
+  width: 100%;
+  table-layout: fixed;
+  border-spacing: 0;
+  overflow: hidden;
+  background: var(--color-surface);
+  text-align: center;
+}
+
+.score-table th,
+.score-table td {
+  padding: 0.7rem 0.25rem;
+  overflow-wrap: anywhere;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.score-table th:last-child,
+.score-table td:last-child {
+  border-right: 0;
+}
+
+.score-table tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+.score-table thead th {
+  background: var(--color-primary);
+  color: #ffffff;
+  font-size: 0.88rem;
+}
+
+.score-table tbody th {
+  color: var(--color-primary-strong);
+  font-weight: 800;
+}
+
+.score-table tbody tr:nth-child(even) {
+  background: rgba(155, 230, 126, 0.1);
+}
+
+.score-table tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.score-table tbody tr:hover {
+  background: rgba(8, 122, 83, 0.12);
+}
+
+/* ================================================================
+   10. SOCIAL LINKS
+   Danh sách hai cột làm nhãn và liên kết dễ quét bằng mắt.
+   ================================================================ */
+.social-list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.social-list li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.social-list a,
+.site-footer a {
+  color: var(--color-primary-strong);
+  font-weight: 750;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.2em;
+}
+
+.social-list a:hover {
+  color: var(--color-primary);
+}
+
+/* ================================================================
+   11. COURSE GRID VÀ CARD
+   auto-fit tự chọn số cột theo không gian. content-visibility trì hoãn việc vẽ
+   card ngoài màn hình, giúp trang có nhiều card cuộn mượt hơn.
+   ================================================================ */
+.courses__heading {
+  max-width: 48rem;
+  margin-bottom: 1.5rem;
+}
+
+.courses__eyebrow {
+  color: var(--color-primary);
+}
+
+.courses__intro {
+  margin: -0.35rem 0 0;
+  color: var(--color-muted);
+}
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: clamp(1rem, 2vw, 1.4rem);
+}
+
+.course-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(23, 32, 51, 0.06);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  content-visibility: auto;
+  contain-intrinsic-size: 22rem;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.course-card:hover {
+  border-color: var(--color-border);
+  transform: translateY(-0.3rem);
+  box-shadow: var(--shadow-md);
+}
+
+.course-card__link {
+  display: flex;
+  height: 100%;
+  color: inherit;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+.course-card__image {
+  width: 100%;
+  height: auto;
+  background: #e5eee2;
+  object-fit: contain; /* Giữ đủ nội dung ảnh; không phóng to làm mất chữ ở mép. */
+}
+
+.course-card__body {
+  flex: 1;
+  padding: 1rem;
+}
+
+.course-card__title {
+  margin: 0 0 0.4rem;
+  color: var(--color-navy);
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+.course-card__description {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+/* ================================================================
+   AI CHAT WIDGET
+   Nút AI cố định ở góc phải dưới màn hình.
+   ================================================================ */
+
+.ai-widget {
+  position: fixed;
+  right: clamp(1rem, 3vw, 2rem);
+  bottom: clamp(1rem, 3vw, 2rem);
+  z-index: 500;
+}
+
+/* Nút mở AI */
+
+.ai-widget__button {
+  display: grid;
+  width: 4rem;
+  aspect-ratio: 1;
+  place-items: center;
+
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-primary-strong)
+  );
+
+  color: white;
+  font-weight: 800;
+  font-size: 1rem;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 0.5rem 1.5rem rgba(8, 122, 83, 0.35);
+
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.ai-widget__button:hover {
+  transform: translateY(-0.2rem) scale(1.05);
+
+  box-shadow:
+    0 0.75rem 2rem rgba(8, 122, 83, 0.45);
+}
+
+/* ================================================================
+   CHAT WINDOW
+   ================================================================ */
+
+.ai-chat {
+  position: absolute;
+
+  right: 0;
+  bottom: calc(100% + 1rem);
+
+  display: flex;
+  flex-direction: column;
+
+  width: min(24rem, calc(100vw - 2rem));
+  height: min(36rem, calc(100vh - 8rem));
+  height: min(36rem, calc(100dvh - 8rem)); /* Theo vùng nhìn động trên mobile. */
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(23, 32, 51, 0.1);
+
+  border-radius: 1.25rem;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 1rem 3rem rgba(23, 32, 51, 0.25);
+}
+
+.ai-chat[hidden] {
+  display: none;
+}
+
+/* ================================================================
+   HEADER
+   ================================================================ */
+
+.ai-chat__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  padding: 1rem;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--color-primary),
+      var(--color-primary-strong)
+    );
+
+  color: white;
+}
+
+.ai-chat__header div {
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-chat__header strong {
+  font-size: 1rem;
+}
+
+.ai-chat__header span {
+  font-size: 0.875rem;
+}
+
+.ai-chat__close {
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+
+  color: white;
+
+  font-size: 1.7rem;
+
+  cursor: pointer;
+}
+
+/* ================================================================
+   MESSAGE AREA
+   ================================================================ */
+
+.ai-chat__messages {
+  flex: 1;
+  min-height: 0; /* Cho phép vùng tin nhắn co lại và cuộn, giữ form luôn hiển thị. */
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.8rem;
+
+  padding: 1rem;
+
+  overflow-y: auto;
+
+  overscroll-behavior: contain;
+
+  background: #f7faf7;
+}
+
+/* Tin nhắn */
+
+.ai-message {
+  flex-shrink: 0;
+  max-width: 82%;
+  overflow-wrap: anywhere;
+
+  padding: 0.7rem 0.9rem;
+
+  border-radius: 1rem;
+
+  font-size: 0.9rem;
+  line-height: 1.5;
+
+  white-space: pre-wrap;
+}
+
+/* AI */
+
+.ai-message--assistant {
+  align-self: flex-start;
+
+  background: white;
+
+  color: var(--color-text);
+
+  border-bottom-left-radius: 0.3rem;
+
+  box-shadow:
+    0 0.2rem 0.8rem rgba(23, 32, 51, 0.07);
+}
+
+/* Người dùng */
+
+.ai-message--user {
+  align-self: flex-end;
+
+  background: var(--color-primary);
+
+  color: white;
+
+  border-bottom-right-radius: 0.3rem;
+}
+
+/* ================================================================
+   INPUT
+   ================================================================ */
+
+.ai-chat__form {
+  display: flex;
+  align-items: flex-end;
+
+  gap: 0.6rem;
+
+  padding: 0.8rem;
+
+  border-top:
+    1px solid rgba(23, 32, 51, 0.08);
+
+  background: white;
+}
+
+.ai-chat__input {
+  flex: 1;
+  min-width: 0; /* Textarea không đẩy nút gửi ra khỏi màn hình hẹp. */
+
+  max-height: 8rem;
+
+  padding: 0.7rem 0.85rem;
+
+  resize: none;
+
+  border:
+    1px solid rgba(23, 32, 51, 0.15);
+
+  border-radius: 0.8rem;
+
+  font: inherit;
+
+}
+
+.ai-chat__input:focus {
+  border-color: var(--color-primary);
+}
+
+.ai-chat__send {
+  padding: 0.7rem 1rem;
+
+  border: 0;
+  border-radius: 0.8rem;
+
+  background: var(--color-primary);
+
+  color: white;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.ai-chat__send:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ================================================================
+   MOBILE
+   ================================================================ */
+
+@media (max-width: 35rem) {
+
+  .ai-widget {
+    right: 1rem;
+    bottom: 1rem;
+  }
+
+  .ai-chat {
+    position: fixed;
+
+    left: 0.75rem;
+    right: 0.75rem;
+
+    bottom: 5.7rem;
+
+    width: auto;
+
+    height: min(70vh, 34rem);
+    height: min(34rem, calc(100dvh - 6.5rem));
+  }
+}
+
+/* ================================================================
+   13. FOOTER
+   Kết thúc trang và cung cấp liên kết email.
+   ================================================================ */
+.site-footer {
+  position: relative;
+  padding: 2rem 1.5rem;
+  overflow: hidden;
+  background: var(--color-navy);
+  color: rgba(255, 255, 255, 0.72);
+  text-align: center;
+}
+
+.site-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-primary), #6677ff);
+}
+
+.site-footer a {
+  color: var(--color-accent);
+}
+
+.site-footer a:hover {
+  color: #ffffff;
+}
+
+/* ================================================================
+   14. RESPONSIVE
+   Tablet: chuyển về một cột. Mobile: thu gọn khoảng cách và căn nav từ trái.
+   ================================================================ */
+@media (max-width: 56rem) {
+  .profile-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .profile-sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .avatar {
+    width: min(100%, 17rem);
+  }
+}
+
+@media (max-width: 35rem) {
+  .site-nav__inner {
+    justify-content: flex-start;
+  }
+
+  .hero__content {
+    padding-inline: 1rem;
+  }
+
+  .profile-sidebar,
+  .courses {
+    padding: 1.4rem 1rem;
+  }
+
+  .profile-details__row {
+    grid-template-columns: 1fr;
+    gap: 0.1rem;
+  }
+
+  .avatar {
+    width: min(100%, 17rem);
+  }
+}
+
+/* ================================================================
+   15. GIẢM CHUYỂN ĐỘNG
+   Tôn trọng cài đặt hệ điều hành, tránh hiệu ứng gây khó chịu và giảm GPU work.
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
