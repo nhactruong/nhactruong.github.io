@@ -1,190 +1,362 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Billy Website</title>
-  <link rel="stylesheet" href="index.css" />
+  <!--
+    Metadata cơ bản:
+    - charset bảo đảm tiếng Việt hiển thị đúng.
+    - viewport giúp bố cục co giãn đúng trên điện thoại.
+    - description hỗ trợ công cụ tìm kiếm hiểu nội dung trang.
+  -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta
+    name="description"
+    content="Trang hồ sơ cá nhân của Trần Trung Hiếu, giới thiệu học vấn, kết quả học tập và các khóa học công nghệ thông tin."
+  >
+  <meta name="theme-color" content="#172033">
+
+  <title>Trần Trung Hiếu | IT Resume</title>
+
+  <!-- CSS được tải trước khi trình duyệt vẽ trang để tránh giao diện nhấp nháy. -->
+  <link rel="stylesheet" href="index.css">
+
+  <!-- defer cho phép tải JavaScript song song và chỉ chạy sau khi HTML đã được phân tích. -->
+  <script src="index.js" defer></script>
 </head>
+
 <body>
+  <!--
+    Liên kết bỏ qua điều hướng:
+    Chỉ xuất hiện khi người dùng dùng phím Tab, giúp đi thẳng tới nội dung chính.
+  -->
+  <a class="skip-link" href="#main-content">Chuyển đến nội dung chính</a>
 
-<!-- HERO -->
-<header id="hero">
-  <h1 class="hero-title">My Resume</h1>
-  <p class="hero-sub">Tran Trung Hieu · Billy Jacob · Vietnam</p>
-</header>
-
-<!-- NAV -->
-<nav>
-  <div class="nav-left">
-    <a href="#contact">About</a>
-    <a href="#edu">Education</a>
-    <a href="#scores">Scores</a>
-  </div>
-  <div class="nav-right">
-    <a href="#social">Social</a>
-    <a href="#courses">Purchased</a>
-  </div>
-</nav>
-
-<!-- MAIN LAYOUT -->
-<div id="flex-container">
-
-  <!-- LEFT COLUMN -->
-  <aside id="left-side">
-
-    <h2 id="contact">About me</h2>
-    <img src="photo/ava.png" id="avatar" alt="Billy Jacob" />
-    <p class="subtitle">I am working in the information technology field</p>
-
-    <ul class="info-list">
-      <li><strong>Fullname:</strong> Tran Trung Hieu</li>
-      <li><strong>Alias:</strong> Billy Jacob</li>
-      <li><strong>Country:</strong> VietNam</li>
-    </ul>
-
-    <h2 id="edu">Education</h2>
-    <ol class="edu-list">
-      <li>Ly Thuong Kiet Primary School</li>
-      <li>Ly Thuong Kiet Secondary School</li>
-      <li>Van Hien High School</li>
-      <li>University of Economics and Industrial Engineering</li>
-    </ol>
-
-    <h2 id="scores">Scores</h2>
-    <table>
-      <thead>
-        <tr>
-          <th rowspan="2">Year</th>
-          <th colspan="2">Math</th>
-          <th rowspan="2">Physics</th>
-          <th rowspan="2">IT</th>
-        </tr>
-        <tr>
-          <th>Math1</th>
-          <th>Math2</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th>2024</th>
-          <td>8</td>
-          <td>0</td>
-          <td>9</td>
-          <td>8</td>
-        </tr>
-        <tr>
-          <th>2025</th>
-          <td>8</td>
-          <td>0</td>
-          <td>8</td>
-          <td>9</td>
-        </tr>
-        <tr>
-          <th>2026</th>
-          <td>10</td>
-          <td>0</td>
-          <td>5</td>
-          <td>10</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h2 id="social">Social Media</h2>
-    <p>Facebook: <a href="https://www.facebook.com/tran.hieu.489500/" target="_blank" rel="noopener">Trần Hiếu</a></p>
-    <p>Instagram: <a href="https://www.instagram.com/hieu_trannt/" target="_blank" rel="noopener">INTJ</a></p>
-
-  </aside>
-
-  <!-- RIGHT COLUMN -->
-  <main id="right-side">
-    <h2 id="courses">Purchased Courses</h2>
-
-    <div id="course-grid">
-
-      <div class="course-card">
-        <a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=198018da4bb74ce0af571474fb27b075&pm=c" target="_blank" rel="noopener">
-          <img class="course-img" src="photo/logicmath.jpg" alt="Logic Math" loading="lazy" />
-          <div class="course-title">Logic Math</div>
-          <div class="course-desc">Toán tư duy cơ bản, xây dựng nền tảng cho việc học kĩ thuật và lập trình bậc đại học</div>
-        </a>
-      </div>
-
-      <div class="course-card">
-        <a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=4175f99f52444f85ad0ba0b279049cb8&pm=c" target="_blank" rel="noopener">
-          <img class="course-img" src="photo/python.jpg" alt="Python Basic" loading="lazy" />
-          <div class="course-title">Python Basic</div>
-          <div class="course-desc">Lập trình python cơ bản đến nâng cao cho người mới, nắm vững kĩ thuật lập trình cơ bản</div>
-        </a>
-      </div>
-
-      <div class="course-card">
-        <a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=5cf295700aef400eb870b9234594d144&pm=c" target="_blank" rel="noopener">
-          <img class="course-img" src="photo/web.jpg" alt="Web Basic" loading="lazy" />
-          <div class="course-title">Web Basic</div>
-          <div class="course-desc">Lập trình website cho người mới bắt đầu, xây dựng website cá nhân và hệ thống backend theo ý muốn</div>
-        </a>
-      </div>
-
-      <div class="course-card">
-        <a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=2a7e11464d29432e9018ab72167d4fab&pm=c" target="_blank" rel="noopener">
-          <img class="course-img" src="photo/game.jpg" alt="Game Python" loading="lazy" />
-          <div class="course-title">Game Python</div>
-          <div class="course-desc">Lập trình game rắn săn mồi, đồng hồ đếm ngược, flappy bird bằng thư viện đồ hoạ pygame</div>
-        </a>
-      </div>
-
-      <div class="course-card">
-        <a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=660c7e75034f44a7a3dd27b2be4f023e&pm=c" target="_blank" rel="noopener">
-          <img class="course-img" src="photo/pythonexcel.jpg" alt="Python Excel" loading="lazy" />
-          <div class="course-title">Python Excel</div>
-          <div class="course-desc">Làm việc với file csv, tự động tạo thư mục và file, ảnh, file word theo yêu cầu của file excel</div>
-        </a>
-      </div>
-
-      <div class="course-card">
-        <a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=c735d90b891a4351b658fff8d8cab589&pm=c" target="_blank" rel="noopener">
-          <img class="course-img" src="photo/data.jpg" alt="Data Science" loading="lazy" />
-          <div class="course-title">Data Science</div>
-          <div class="course-desc">Sử dụng kĩ thuật làm sạch dữ liệu và vẽ biểu đồ bằng thư viện matplotlib để phân tích dữ liệu</div>
-        </a>
-      </div>
-
-      <div class="course-card">
-        <a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=49629f65a8424683993db3e15ad4e71f&pm=c" target="_blank" rel="noopener">
-          <img class="course-img" src="photo/ai.jpg" alt="AI Basic" loading="lazy" />
-          <div class="course-title">AI Basic</div>
-          <div class="course-desc">Lập trình trí tuệ nhân tạo, thuật toán KNN, K-means, Regression và Gradient Descent</div>
-        </a>
-      </div>
-
-      <div class="course-card">
-        <a href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=9f4ae68d413f4746b2646bcd751104e9&pm=c" target="_blank" rel="noopener">
-          <img class="course-img" src="photo/pythonchatgpt.png" alt="Python ChatGPT" loading="lazy" />
-          <div class="course-title">Python ChatGPT</div>
-          <div class="course-desc">Xử lý file JSON, tạo chương trình quản lý học sinh và phân tích dữ liệu Facebook với ChatGPT</div>
-        </a>
-      </div>
-
+  <!-- HERO: phần giới thiệu ngắn ở đầu trang. -->
+  <header class="hero">
+    <div class="page-container hero__content">
+      <p class="hero__eyebrow">Information Technology Student</p>
+      <h1 class="hero__title">My Resume</h1>
+      <p class="hero__subtitle">Trần Trung Hiếu · Billy Jacob · Vietnam</p>
     </div>
+  </header>
+
+  <!--
+    NAVIGATION:
+    Các liên kết trỏ tới từng section. JavaScript sẽ đánh dấu mục đang được xem
+    bằng IntersectionObserver, không phải tính toán liên tục ở mỗi lần cuộn.
+  -->
+  <nav class="site-nav" aria-label="Điều hướng hồ sơ">
+    <div class="page-container site-nav__inner">
+      <a class="site-nav__link" href="#about">About</a>
+      <a class="site-nav__link" href="#education">Education</a>
+      <a class="site-nav__link" href="#scores">Scores</a>
+      <a class="site-nav__link" href="#social">Social</a>
+      <a class="site-nav__link" href="#courses">Purchased</a>
+    </div>
+  </nav>
+
+  <!-- MAIN: toàn bộ nội dung chính của hồ sơ. -->
+  <main id="main-content" class="page-container profile-layout">
+    <!--
+      SIDEBAR:
+      Chứa thông tin cá nhân, học vấn, điểm số và mạng xã hội.
+      Trên màn hình nhỏ, cột này tự chuyển thành một khối nằm phía trên khóa học.
+    -->
+    <aside class="profile-sidebar" aria-label="Thông tin cá nhân">
+      <section id="about" class="content-section observed-section" aria-labelledby="about-title">
+        <h2 id="about-title" class="section-title">About me</h2>
+
+        <!--
+          Avatar giữ nguyên ảnh nguồn; CSS hiển thị toàn bộ ảnh, không cắt nội dung.
+          fetchpriority=high vì ảnh xuất hiện ngay trong vùng nhìn đầu tiên.
+        -->
+        <img
+          class="avatar"
+          src="photo/avatar.webp"
+          alt="Ảnh đại diện của Trần Trung Hiếu"
+          width="600"
+          height="600"
+          decoding="async"
+          fetchpriority="high"
+        >
+
+        <p class="profile-summary">I am working in the information technology field.</p>
+
+        <dl class="profile-details">
+          <div class="profile-details__row">
+            <dt>Full name</dt>
+            <dd>Trần Trung Hiếu</dd>
+          </div>
+          <div class="profile-details__row">
+            <dt>Alias</dt>
+            <dd>Billy Jacob</dd>
+          </div>
+          <div class="profile-details__row">
+            <dt>Country</dt>
+            <dd>Vietnam</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section id="education" class="content-section observed-section" aria-labelledby="education-title">
+        <h2 id="education-title" class="section-title">Education</h2>
+        <ol class="timeline-list">
+          <li>Ly Thuong Kiet Primary School</li>
+          <li>Ly Thuong Kiet Secondary School</li>
+          <li>Van Hien High School</li>
+          <li>University of Economics and Industrial Engineering</li>
+        </ol>
+      </section>
+
+      <section id="scores" class="content-section observed-section" aria-labelledby="scores-title">
+        <h2 id="scores-title" class="section-title">Scores</h2>
+
+        <!-- Bảng chia đều 5 cột để nhìn đủ điểm trên điện thoại; wrapper dự phòng khi phóng to chữ. -->
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Bảng điểm">
+          <table class="score-table">
+            <caption class="visually-hidden">Bảng điểm các môn từ năm 2024 đến 2026</caption>
+            <thead>
+              <tr>
+                <th rowspan="2" scope="col">Year</th>
+                <th colspan="2" scope="colgroup">Math</th>
+                <th rowspan="2" scope="col">Physics</th>
+                <th rowspan="2" scope="col">IT</th>
+              </tr>
+              <tr>
+                <th scope="col">Math 1</th>
+                <th scope="col">Math 2</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">2024</th>
+                <td>8</td>
+                <td>0</td>
+                <td>9</td>
+                <td>8</td>
+              </tr>
+              <tr>
+                <th scope="row">2025</th>
+                <td>8</td>
+                <td>0</td>
+                <td>8</td>
+                <td>9</td>
+              </tr>
+              <tr>
+                <th scope="row">2026</th>
+                <td>10</td>
+                <td>0</td>
+                <td>5</td>
+                <td>10</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="social" class="content-section observed-section" aria-labelledby="social-title">
+        <h2 id="social-title" class="section-title">Social Media</h2>
+        <ul class="social-list">
+          <li>
+            <span>Facebook</span>
+            <a href="https://www.facebook.com/tran.hieu.489500/" target="_blank" rel="noopener noreferrer">
+              Trần Hiếu <span aria-hidden="true">↗</span>
+            </a>
+          </li>
+          <li>
+            <span>Instagram</span>
+            <a href="https://www.instagram.com/hieu_trannt/" target="_blank" rel="noopener noreferrer">
+              INTJ <span aria-hidden="true">↗</span>
+            </a>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <!-- COURSE AREA: danh sách khóa học đã mua, hiển thị theo CSS Grid. -->
+    <section id="courses" class="courses observed-section" aria-labelledby="courses-title">
+      <div class="courses__heading">
+        <p class="courses__eyebrow">Learning journey</p>
+        <h2 id="courses-title" class="section-title">Purchased Courses</h2>
+        <p class="courses__intro">Các khóa học xây dựng nền tảng từ lập trình đến AI và khoa học dữ liệu.</p>
+      </div>
+
+      <div class="course-grid">
+        <!--
+          Mỗi article là một nội dung độc lập. Toàn bộ thẻ là liên kết để tăng vùng bấm.
+          Ảnh dùng loading=lazy và decoding=async để không chặn nội dung đang hiển thị.
+        -->
+        <article class="course-card">
+          <a class="course-card__link" href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=198018da4bb74ce0af571474fb27b075&amp;pm=c" target="_blank" rel="noopener noreferrer">
+            <img class="course-card__image" src="photo/logic-math.webp" alt="Ảnh minh họa khóa Logic Math" width="960" height="540" loading="lazy" decoding="async">
+            <div class="course-card__body">
+              <h3 class="course-card__title">Logic Math</h3>
+              <p class="course-card__description">Toán tư duy cơ bản, xây dựng nền tảng cho việc học kỹ thuật và lập trình bậc đại học.</p>
+            </div>
+          </a>
+        </article>
+
+        <article class="course-card">
+          <a class="course-card__link" href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=4175f99f52444f85ad0ba0b279049cb8&amp;pm=c" target="_blank" rel="noopener noreferrer">
+            <img class="course-card__image" src="photo/python-basic.webp" alt="Ảnh minh họa khóa Python Basic" width="960" height="540" loading="lazy" decoding="async">
+            <div class="course-card__body">
+              <h3 class="course-card__title">Python Basic</h3>
+              <p class="course-card__description">Lập trình Python từ cơ bản đến nâng cao, giúp người mới nắm vững các kỹ thuật lập trình nền tảng.</p>
+            </div>
+          </a>
+        </article>
+
+        <article class="course-card">
+          <a class="course-card__link" href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=5cf295700aef400eb870b9234594d144&amp;pm=c" target="_blank" rel="noopener noreferrer">
+            <img class="course-card__image" src="photo/web-basic.webp" alt="Ảnh minh họa khóa Web Basic" width="960" height="540" loading="lazy" decoding="async">
+            <div class="course-card__body">
+              <h3 class="course-card__title">Web Basic</h3>
+              <p class="course-card__description">Lập trình website cho người mới, từ website cá nhân đến hệ thống backend theo nhu cầu.</p>
+            </div>
+          </a>
+        </article>
+
+        <article class="course-card">
+          <a class="course-card__link" href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=2a7e11464d29432e9018ab72167d4fab&amp;pm=c" target="_blank" rel="noopener noreferrer">
+            <img class="course-card__image" src="photo/game-python.webp" alt="Ảnh minh họa khóa Game Python" width="960" height="540" loading="lazy" decoding="async">
+            <div class="course-card__body">
+              <h3 class="course-card__title">Game Python</h3>
+              <p class="course-card__description">Lập trình Snake, đồng hồ đếm ngược và Flappy Bird với thư viện đồ họa Pygame.</p>
+            </div>
+          </a>
+        </article>
+
+        <article class="course-card">
+          <a class="course-card__link" href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=660c7e75034f44a7a3dd27b2be4f023e&amp;pm=c" target="_blank" rel="noopener noreferrer">
+            <img class="course-card__image" src="photo/python-excel.webp" alt="Ảnh minh họa khóa Python Excel" width="960" height="540" loading="lazy" decoding="async">
+            <div class="course-card__body">
+              <h3 class="course-card__title">Python Excel</h3>
+              <p class="course-card__description">Làm việc với CSV và tự động tạo thư mục, tệp, ảnh hoặc tài liệu Word từ dữ liệu Excel.</p>
+            </div>
+          </a>
+        </article>
+
+        <article class="course-card">
+          <a class="course-card__link" href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=c735d90b891a4351b658fff8d8cab589&amp;pm=c" target="_blank" rel="noopener noreferrer">
+            <img class="course-card__image" src="photo/data-science.webp" alt="Ảnh minh họa khóa Data Science" width="960" height="540" loading="lazy" decoding="async">
+            <div class="course-card__body">
+              <h3 class="course-card__title">Data Science</h3>
+              <p class="course-card__description">Làm sạch dữ liệu và trực quan hóa bằng Matplotlib để phục vụ quá trình phân tích dữ liệu.</p>
+            </div>
+          </a>
+        </article>
+
+        <article class="course-card">
+          <a class="course-card__link" href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=49629f65a8424683993db3e15ad4e71f&amp;pm=c" target="_blank" rel="noopener noreferrer">
+            <img class="course-card__image" src="photo/ai.webp" alt="Ảnh minh họa khóa AI Basic" width="960" height="540" loading="lazy" decoding="async">
+            <div class="course-card__body">
+              <h3 class="course-card__title">AI Basic</h3>
+              <p class="course-card__description">Nền tảng trí tuệ nhân tạo với KNN, K-means, Regression và Gradient Descent.</p>
+            </div>
+          </a>
+        </article>
+
+        <article class="course-card">
+          <a class="course-card__link" href="https://dunglailaptrinh.notion.site/D-ng-L-i-L-p-Tr-nh-Official-Website-2148dcd9ff9f4af78e47873faa6ef2cb?p=9f4ae68d413f4746b2646bcd751104e9&amp;pm=c" target="_blank" rel="noopener noreferrer">
+            <img class="course-card__image" src="photo/python-chatgpt.webp" alt="Ảnh minh họa khóa Python ChatGPT" width="960" height="540" loading="lazy" decoding="async">
+            <div class="course-card__body">
+              <h3 class="course-card__title">Python ChatGPT</h3>
+              <p class="course-card__description">Xử lý JSON, xây dựng chương trình quản lý học sinh và phân tích dữ liệu Facebook với ChatGPT.</p>
+            </div>
+          </a>
+        </article>
+      </div>
+    </section>
   </main>
 
+<!-- =========================================================
+     AI CHAT WIDGET
+     Nút tròn cố định góc phải. Khi bấm sẽ mở cửa sổ chat AI.
+     ========================================================= -->
+<div class="ai-widget">
+
+  <button
+    id="ai-toggle"
+    class="ai-widget__button"
+    type="button"
+    aria-label="Mở trợ lý AI"
+    aria-controls="ai-chat"
+    aria-expanded="false"
+  >
+    AI
+  </button>
+
+  <section
+    id="ai-chat"
+    class="ai-chat"
+    aria-label="Trợ lý AI"
+    hidden
+  >
+
+    <header class="ai-chat__header">
+      <div>
+        <strong>AI Assistant</strong>
+        <span>Trò chuyện mô phỏng</span>
+      </div>
+
+      <button
+        id="ai-close"
+        class="ai-chat__close"
+        type="button"
+        aria-label="Đóng trợ lý AI"
+      >
+        ×
+      </button>
+    </header>
+
+    <div
+      id="ai-messages"
+      class="ai-chat__messages"
+      role="log"
+      aria-label="Lịch sử trò chuyện"
+      aria-relevant="additions"
+      aria-live="polite"
+    >
+      <div class="ai-message ai-message--assistant">
+        Xin chào! Bạn có thể chào hỏi, hỏi thăm sức khoẻ hoặc nói lời tạm biệt.
+      </div>
+    </div>
+
+    <form id="ai-form" class="ai-chat__form">
+
+      <label class="visually-hidden" for="ai-input">
+        Nhập tin nhắn
+      </label>
+
+      <textarea
+        id="ai-input"
+        class="ai-chat__input"
+        rows="1"
+        maxlength="1000"
+        placeholder="Nhập tin nhắn..."
+        enterkeyhint="send"
+        required
+      ></textarea>
+
+      <button
+        id="ai-send"
+        class="ai-chat__send"
+        type="submit"
+      >
+        Gửi
+      </button>
+
+    </form>
+
+  </section>
+
 </div>
-
-<!-- ZALO WIDGET -->
-<div id="zalo-widget">
-  <img src="photo/Icon_of_Zalo.svg.png" alt="Zalo Icon" />
-  <div id="zalo-qr-popup">
-    <img src="photo/qrzalo.jpg" alt="My QR Zalo">
-    <p>Scan to chat</p>
-  </div>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  Created by Billy Jacob · <a href="mailto:trunghieutran822007@gmail.com">Email me</a>
-</footer>
-
-<script src="index.js"></script>
+  <!-- FOOTER: thông tin tác giả và liên hệ trực tiếp qua email. -->
+  <footer class="site-footer">
+    <div class="page-container">
+      Created by Billy Jacob ·
+      <a href="mailto:trunghieutran822007@gmail.com">Email me</a>
+    </div>
+  </footer>
 </body>
 </html>
