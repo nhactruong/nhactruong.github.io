@@ -29,7 +29,7 @@
    */
   const replyRules = [
     { pattern: /\b(tam biet|chao tam biet|hen gap lai|bye|good\s?bye|see you)\b/, reply: "Good bye!" },
-    { pattern: /\b(khoe|suc khoe|how are you|how do you feel|how are things)\b/, reply: "Thank you" },
+    { pattern: /\b(khoe|suc khoe|how are you|how do you feel|how are things|cam on|thank you)\b/, reply: "Thank you" },
     { pattern: /\b(chao|hello|hi|hey|good morning|good afternoon|good evening)\b/, reply: "Hello" },
   ];
 
@@ -37,7 +37,7 @@
   function getMockReply(message) {
     const normalized = normalizeMessage(message);
     return replyRules.find(({ pattern }) => pattern.test(normalized))?.reply
-      ?? "Mình đang ở chế độ mô phỏng. Bạn thử chào hỏi, hỏi thăm sức khoẻ hoặc nói lời tạm biệt nhé.";
+      ?? "I am currently in simulation mode. Try saying hello, asking how I am, or saying goodbye.";
   }
 
   /**
